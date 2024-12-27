@@ -38,8 +38,14 @@
     border-radius: 4px;
 }
 
+.button-container{
+    display: flex;
+    justify-content: center;
+    
+}
 
-.login-container button{
+.login-button{
+    font-size: .1rem;
     margin-top: 20px;
     border: none;
     border-radius: 4px;

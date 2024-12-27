@@ -3,9 +3,9 @@
     justify-content: center;
 }
 
-.register-container form{
+/* .register-container form{
     width: 300px;
-}
+} */
 
 .register-container {
     display: flex;
@@ -14,7 +14,9 @@
     justify-content: center;
     height: 100vh; 
     width: 350px;
-  }
+}
+
+
 
 .register-title{
     display: flex;
