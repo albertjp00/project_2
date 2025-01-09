@@ -6,6 +6,8 @@ import Login from './user/login/login'
 
 import axios from 'axios'
 import Register from './user/register/register'
+import Home from './user/home/home'
+import Navbar from './userComponents/navbar/navbar'
 
 axios.defaults.baseURL = 'http://localhost:2000'
 axios.defaults.withCredentials = true
@@ -15,14 +17,21 @@ function App() {
 
   return (
     <>
+    
+    <div className="app">
     <BrowserRouter>
-      
-      <Routes>
-          <Route path='/login' element={<Login />} />
-          <Route path='/register' element={<Register />}/>
-      </Routes>
+    
+    
+    
+    <Routes>
+        <Route path='/login' element={<Login />} />
+        <Route path='/register' element={<Register />}/>
+        <Route path='/home' element={<Home />} />
 
-    </BrowserRouter>
+    </Routes>
+
+  </BrowserRouter>
+    </div>
 
        
       

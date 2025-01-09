@@ -20,14 +20,14 @@ mongoose.connect(process.env.MONGO_URL)
 
 
 app.use(cors({
-    origin: 'https://localhost:5173',
+    origin: 'http://localhost:5173',
     credentials : true
 }))
 
 
 
 
-app.use('/home',userRoute)
+app.use('/',userRoute)
 
 app.listen(port,()=>{
     console.log("started");
