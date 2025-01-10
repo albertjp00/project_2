@@ -10,7 +10,7 @@ const Home = () => {
 
   const [category,setCategory] = useState("All")
   return (
-    <div>
+    <div className='home'>
         <Navbar />
         <Header />
         <Menu category={category} setCategory={setCategory}/>

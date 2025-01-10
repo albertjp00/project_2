@@ -9,30 +9,41 @@ import Register from './user/register/register'
 import Home from './user/home/home'
 import Navbar from './userComponents/navbar/navbar'
 
+
+import AdminLogin from './admin/login/login'
+import Dashboard from './admin/dashboard/dashboard'
+
 axios.defaults.baseURL = 'http://localhost:2000'
 axios.defaults.withCredentials = true
 
 function App() {
-  const [count, setCount] = useState(0)
+  
 
   return (
     <>
     
     <div className="app">
-    <BrowserRouter>
+ 
     
     
     
     <Routes>
-        <Route path='/login' element={<Login />} />
-        <Route path='/register' element={<Register />}/>
-        <Route path='/home' element={<Home />} />
+        <Route path='/user/login' element={<Login />} />
+        <Route path='/user/register' element={<Register />}/>
+        <Route path='/user/home' element={<Home />} />
+    
 
+
+        {/* admin */}
+        
+        <Route path='/admin/login' element = {<AdminLogin />}/>
+        <Route path='/admin/dashboard' element={<Dashboard />}/> 
+          
+          
     </Routes>
 
-  </BrowserRouter>
+        
     </div>
-
        
       
       
