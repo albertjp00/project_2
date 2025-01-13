@@ -4,6 +4,8 @@ import { AdminAssets } from '../../../adminAssets/assets'
 import AdminNavbar from '../../components/navbar/navbar'
 import Sidebar from '../../components/sidebar/sidebar'
 import axios from 'axios'
+import { toast } from 'react-toastify'
+
 
 const Add = () => {
 
@@ -26,14 +28,43 @@ const Add = () => {
         e.preventDefault()
 
         const formData = new FormData()
+
         formData.append("name",data.name)
         formData.append("description",data.description)
-        formData.append("price",Number(data.price))
+        formData.append("price",data.price)
         formData.append("category",data.category)
         formData.append("image",image)
 
-        const response = await axios.post('/http://localhost:2000/admin')
+        try{
+        const response = await axios.post('http://localhost:2000/admin/addProduct',
+            formData,
+            {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+            }
+        )
+
+        if(response.data.success){
+            setData({
+                name:"",
+                description:"",
+                price:"",
+                category:""
+            })
+            setImage(false)
+            toast.success(response.data.message)
+        }else{
+            toast.error(response.data.message || "Failed to add product");
+        }
+    }catch{
+        console.log(error);
+        
     }
+
+        
+    }
+
 
   return (
     

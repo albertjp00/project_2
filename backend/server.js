@@ -13,6 +13,8 @@ const dotenv = require('dotenv').config()
 
 const userRoute = require('./routes/userRoute')
 
+const adminRoute = require('./routes/adminRoute')
+
 
 mongoose.connect(process.env.MONGO_URL)
 .then(()=>console.log("Database connected"))
@@ -28,6 +30,8 @@ app.use(cors({
 
 
 app.use('/',userRoute)
+
+app.use('/admin',adminRoute)
 
 app.listen(port,()=>{
     console.log("started");

@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import {BrowserRouter, Route, Routes} from 'react-router-dom'
+import { ToastContainer, toast } from 'react-toastify';
 
 // import './App.css'
 import Login from './user/login/login'
@@ -24,7 +25,7 @@ function App() {
     <>
     
     <div className="app">
- 
+    <ToastContainer />
     
     
     
