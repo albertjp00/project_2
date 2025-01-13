@@ -10,7 +10,8 @@ const test = (req,res)=>{
 
 
 const login = async (req,res) =>{
-    console.log(req.body);
+    try {
+        console.log(req.body);
     
     const {email,password} = req.body
 
@@ -24,6 +25,10 @@ const login = async (req,res) =>{
         }
     }else{
         return res.json({message:"Email is incorrect"})
+    }
+    } catch (error) {
+        console.log(error);
+        
     }
 }
 
@@ -51,6 +56,7 @@ const register = async (req,res)=>{
 
 
     } catch (error) {
+        console.log(error);
         
     }
     

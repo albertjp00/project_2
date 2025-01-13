@@ -1,23 +1,24 @@
 import React from 'react'
 import './sidebar.css'
 import { AdminAssets } from '../../../adminAssets/assets'
+import { NavLink } from 'react-router-dom'
 
 const Sidebar = () => {
   return (
     <div className='sidebar'>
         <div className="sidebar-options">
-            <div className="sidebar-option">
+            <NavLink  to="/admin/dashboard/add"  className="sidebar-option">
                 <img src={AdminAssets.order_icon} alt="" />
                 <p>Add Items</p>
-            </div>
-            <div className="sidebar-option">
+            </NavLink>
+            <NavLink to="/admin/dashboard/list" className="sidebar-option">
                 <img src={AdminAssets.order_icon} alt="" />
                 <p>List Items</p>
-            </div>
-            <div className="sidebar-option">
+            </NavLink>
+            <NavLink to='/admin/orders' className="sidebar-option">
                 <img src={AdminAssets.order_icon} alt="" />
                 <p>Orders</p>
-            </div>
+            </NavLink>
         </div>
       
     </div>
