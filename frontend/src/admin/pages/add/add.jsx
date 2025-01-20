@@ -24,8 +24,41 @@ const Add = () => {
         setData((data)=>({...data,[name]:value}))
     } 
 
+    const validateForm = () =>{
+        const {name,description,price,category} = data
+
+        if(!name.trim()){
+            toast.error("Name is required")
+            return false
+        }
+        if(!description.trim()){
+            toast.error("Description is required")
+            return false
+        }
+
+        if(!price || isNaN(price) || price<0){
+            toast.error("Invalid Price")
+            return
+        }
+        if(!category.trim()){
+            toast.error("Category is required")
+            return false
+        }
+        if (!image) {
+            toast.error("Image is required.");
+            return false;
+        }
+
+        return true
+
+    }
+
     const onSubmitHandler = async  (e)=>{
         e.preventDefault()
+
+        if(!validateForm()){
+            return
+        }
 
         const formData = new FormData()
 
@@ -76,7 +109,7 @@ const Add = () => {
                 <label htmlFor="image">
                     <img src={image?URL.createObjectURL(image):AdminAssets.upload_area} alt="" />
                 </label>
-                <input onChange={(e)=>setImage(e.target.files[0])} type="file" id='image' hidden required />
+                <input onChange={(e)=>setImage(e.target.files[0])} type="file" id='image' hidden />
             </div>
             <div className="add-product-name flex-col">
                 <p>Product Name</p>
@@ -84,7 +117,7 @@ const Add = () => {
             </div>
             <div className="add-product-description flex-col">
                 <p>Product Description</p>
-                <textarea onChange={onChangeHandler} value={data.description} name="description" rows="6" placeholder='Write content here' required></textarea>
+                <textarea onChange={onChangeHandler} value={data.description} name="description" rows="6" placeholder='Write content here'></textarea>
             </div>
             <div className="add-category-price">
                 <div className="add-category flex-col">

@@ -12,7 +12,7 @@ const Dashboard = () => {
       <AdminNavbar />
       <div className='container'>
         <Sidebar />
-        <div>
+        <div className='a'>
           <Routes>
             <Route path="add" element={<Add />} />
             <Route path="list" element={<List />} />

@@ -11,6 +11,13 @@ const addProduct = async (req,res)=>{
 
         const image = req.file.filename
 
+        const existing = await Product.findOne({name})
+        console.log(existing);
+        
+        if(existing){
+            return res.json({success:false,message:"product already exists"})
+        }
+
         const newProduct = {
             name,description,price,category,image
         }
@@ -28,6 +35,30 @@ const addProduct = async (req,res)=>{
     }
 }
 
+
+const getList = async (req,res)=>{
+
+    const products = await Product.find()
+   
+    res.json({success:true,products:products})
+    
+}
+
+const unlist = async  (req,res) =>{
+    let id = req.query.id
+    console.log(id);
+    
+
+    const unlist = await Product.findByIdAndDelete(id)
+
+    res.json({success:true})
+    
+}
+
+
+
 module.exports ={
-    addProduct
+    addProduct,
+    getList,
+    unlist,
 }

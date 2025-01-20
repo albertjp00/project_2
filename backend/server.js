@@ -3,6 +3,8 @@ const express = require("express")
 
 const app = express()
 
+const path= require('path')
+
 const port = 2000
 
 const cors = require('cors')
@@ -14,6 +16,9 @@ const dotenv = require('dotenv').config()
 const userRoute = require('./routes/userRoute')
 
 const adminRoute = require('./routes/adminRoute')
+
+
+adminRoute.use('/image',express.static(path.join(__dirname,'uploads')))
 
 
 mongoose.connect(process.env.MONGO_URL)
