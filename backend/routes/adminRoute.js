@@ -6,7 +6,7 @@ const multer = require('multer')
 
 const cors = require('cors')
 
-const { addProduct, getList,  unlist } = require('../controllers/adminController')
+const { addProduct, getList,  unlist, listItem } = require('../controllers/adminController')
 
 
 admin.use(express.json())
@@ -37,6 +37,8 @@ admin.post('/addProduct',upload.single("image"),addProduct)
 admin.get('/getList',getList)
 
 admin.post('/unlist',unlist)
+
+admin.post('/listItem',listItem)
 
 
 module.exports = admin

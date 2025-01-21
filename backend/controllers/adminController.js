@@ -49,16 +49,27 @@ const unlist = async  (req,res) =>{
     console.log(id);
     
 
-    const unlist = await Product.findByIdAndDelete(id)
+    const unlist = await Product.findByIdAndUpdate(id,{status:"unlisted"})
+
+    res.json({success:true})
+    
+}
+
+const listItem = async  (req,res) =>{
+    let id = req.query.id
+    console.log(id);
+    
+
+    const list = await Product.findByIdAndUpdate(id,{status:"listed"})
 
     res.json({success:true})
     
 }
 
 
-
 module.exports ={
     addProduct,
     getList,
     unlist,
+    listItem
 }

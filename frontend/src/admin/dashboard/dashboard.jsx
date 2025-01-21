@@ -6,6 +6,7 @@ import Add from '../pages/add/add'
 import { Route, Routes } from 'react-router-dom'
 import List from '../pages/list/list'
 
+
 const Dashboard = () => {
   return (
     <div>
@@ -16,6 +17,7 @@ const Dashboard = () => {
           <Routes>
             <Route path="add" element={<Add />} />
             <Route path="list" element={<List />} />
+ 
           </Routes>
         </div>
       </div>
