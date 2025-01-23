@@ -4,7 +4,7 @@ const user = express.Router()
 
 const cors = require('cors')
 
-const {test, register, login} = require('../controllers/userController')
+const {test, register, login, getProducts, cartAdd} = require('../controllers/userController')
 
 
 user.use(
@@ -22,5 +22,9 @@ user.get('/',test)
 user.post('/login',login)
 
 user.post('/register',register)
+
+user.get('/getProducts',getProducts)
+
+user.post('/cartAdd',cartAdd)
 
 module.exports = user

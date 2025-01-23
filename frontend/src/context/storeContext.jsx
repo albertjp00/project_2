@@ -1,5 +1,6 @@
 import { createContext, useEffect, useState } from "react";
 import { food_list } from "../assets/assets";
+import axios from "axios";
 
 
 export const StoreContext = createContext(null)
@@ -10,13 +11,23 @@ const StoreContextProvider = (props)=>{
 
 
     const [cartItems,setCartItems] = useState({})
+    
     const [foodList,setFoodList] = useState([])
 
-    const addToCart = (itemId) =>{
-        if(!cartItems[itemId]){
-            setCartItems((prev)=>({...prev,[itemId]:1}))
-        }else{
-            setCartItems((prev)=>({...prev,[itemId]:prev[itemId]+1}))
+    const addToCart = async (itemId) =>{
+
+
+        const response = await axios.post('http://localhost:2000/user/cartAdd',{
+            itemId : itemId,
+            quantity : cartItems[itemId] ? cartItems[itemId] + 1 : 1,
+        })
+
+        if(response.success){
+            if(!cartItems[itemId]){
+                setCartItems((prev)=>({...prev,[itemId]:1}))
+            }else{
+                setCartItems((prev)=>({...prev,[itemId]:prev[itemId]+1}))
+            }
         }
     }
 
@@ -24,14 +35,28 @@ const StoreContextProvider = (props)=>{
         setCartItems((prev)=>({...prev,[itemId]:prev[itemId]-1}))
     }
 
+    const fetchFoodList = async () =>{
+        try {
+            const response = await axios.get('http://localhost:2000/user/getProducts')
+            setFoodList(response.data.products)
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
     useEffect(()=>{
-        console.log(cartItems);
+        async function loadData(){
+            await fetchFoodList()
+        }
+
+        loadData()
         
-    },[cartItems])
+    },[])
 
     const contextValue = {
-        food_list,
+        foodList,
         cartItems,
+        setFoodList,
         setCartItems,
         addToCart,
         removeFromCart,

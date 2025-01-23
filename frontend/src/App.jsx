@@ -8,12 +8,13 @@ import Login from './user/login/login'
 import axios from 'axios'
 import Register from './user/register/register'
 import Home from './user/home/home'
-
+import Cart from './user/cart/cart';
 
 import AdminLogin from './admin/login/login'
 import Dashboard from './admin/dashboard/dashboard'
-import Add from './admin/pages/add/add'
-import List from './admin/pages/list/list'
+
+
+
 
 axios.defaults.baseURL = 'http://localhost:2000'
 axios.defaults.withCredentials = true
@@ -33,6 +34,7 @@ function App() {
         <Route path='/user/login' element={<Login />} />
         <Route path='/user/register' element={<Register />}/>
         <Route path='/user/home' element={<Home />} />
+        <Route path='/user/cart' element={<Cart/>}/>
     
 
 
