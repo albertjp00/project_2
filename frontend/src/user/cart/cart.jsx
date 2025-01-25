@@ -6,9 +6,15 @@ import Navbar from '../../userComponents/navbar/navbar'
 const Cart = () => {
 
   const {cartItems,foodList,removeFromCart} = useContext(StoreContext)
+
+  
+  
   return (
-    <div className='cart'>
+    <div className="navbar-cart">
       <Navbar />
+   
+    <div className='cart'>
+      
       <div className="cart-items">
         <div className="cart-items-title">
           <p>items</p>
@@ -16,27 +22,32 @@ const Cart = () => {
           <p>Price</p>
           <p>Quantity</p>
           <p>Total</p>
-          <p>Remove</p>
+          <p>Remove</p> 
         </div>
         <br />
         <hr />
         {foodList.map((item,index)=>{
-          if(cartItems[item._id]>0){
-            return(
-              <div className="cart-items-title cart-items-item">
-                <img src={item.image} alt="" />
-                <p>{item.name}</p>
-                <p>{item.price}</p>
-                <p>{cartItems[item._id]}</p>
-                <p>{item.price*cartItems[item._id]}</p>
-              </div>
-            )
-          }
-        })
-
-        }
+            if(cartItems[item._id]>0){
+              return (
+                <div>
+                  <div key={item._id} className="cart-items-title cart-items-item">
+                    <img className="cart-item-image" src={`http://localhost:2000/user/image/${item.image}`} alt="" />
+                    <p>{item.name}</p>
+                    <p>{item.price}</p>
+                    <p>{cartItems[item._id]}</p>
+                    <p>{item.price*cartItems[item._id]}</p>
+                    <p>X</p>
+                  </div>
+                  <hr />
+                </div>          
+              )
+            }
+        })}
+        
+        
       </div>
       
+    </div>
     </div>
   )
 }

@@ -75,23 +75,41 @@ const getProducts  = async (req,res)=>{
 }
 
 
+const loadCart = async (req,res) =>{
+    try {
+
+        let userId  = 1 
+        const cartData = await Cart.find({userId})
+        
+        
+        res.json({success:true,cartData:cartData})
+    } catch (error) {
+        console.log(error);
+        
+    }
+}
+
 const cartAdd = async (req,res)=>{
     try {
         let productId = req.body.itemId
         let userId = 1
         
         
-        let cartItem = await Cart.findOne({productId})
+        let cartItem = await Cart.findOne({productId:productId})
         if(!cartItem){
             cartItem = new Cart({
                 userId,
                 productId:productId,
-                quantity:req.body.quantity + 1
+                quantity:req.body.quantity
             })
-            
+            await cartItem.save()
+        }else{
+            cartItem.quantity = req.body.quantity
+            await cartItem.save()
         }
-        await cartItem.save()
-        console.log(cartItem);
+        
+        console.log("cartItem",cartItem);
+        res.json({success:true})
         
     } catch (error) {
         console.log(error);
@@ -100,13 +118,42 @@ const cartAdd = async (req,res)=>{
 } 
 
 
+const cartRemove = async (req,res)=>{
+    try {
+        console.log("body",req.body);
+        
+        let id = req.body.itemId
+        let quantity = req.body.quantity
+        
+        if(quantity === 0){
+            let cart = await Cart.deleteOne({productId:id})
+            
+            
+            
+        }else{
+            let cart = await Cart.findOne({productId:id})
+            cart.quantity -=1
+            await cart.save()
+        }
+        
+        res.json({success:true})
+
+    } catch (error) {
+        console.log(error);
+        
+    }
+}
+
+
 
 module.exports = {
     test,
     login,
     register,
     getProducts,
-    cartAdd
+    cartAdd,
+    loadCart,
+    cartRemove
 }
 
 
