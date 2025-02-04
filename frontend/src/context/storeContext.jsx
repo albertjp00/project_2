@@ -1,4 +1,4 @@
-import { createContext, useEffect, useState } from "react";
+import { createContext, useEffect, useMemo, useState } from "react";
 import { food_list } from "../assets/assets";
 import axios from "axios";
 import { toast } from "react-toastify";
@@ -17,7 +17,7 @@ const StoreContextProvider = (props)=>{
 
     const loadCartData =  async ()=>{
         try {
-            console.log("carttt");
+            
             
             const response = await axios.get('http://localhost:2000/user/cart')
             // console.log(response.data.cartData[0]);
@@ -31,11 +31,12 @@ const StoreContextProvider = (props)=>{
                 acc[item.productId] = item.quantity
                 return acc
             },{})
-            //   console.log("formated",formattedCartItems);
+            
 
               
 
-              setCartItems(formattedCartItems)  
+              setCartItems(formattedCartItems) 
+           
         }else{
             toast.error("Error loading cart")
         }
@@ -114,7 +115,7 @@ const StoreContextProvider = (props)=>{
         }
     }
 
-    useEffect(()=>{
+     useEffect(()=>{
         async function loadData(){
             await fetchFoodList()
             await loadCartData()
@@ -124,6 +125,33 @@ const StoreContextProvider = (props)=>{
         
     },[])
 
+    const totalAmount = useMemo(() => {
+        let total = 0;
+        // console.log("total amount");
+        
+
+        if (!foodList.length) return 0;
+
+        for (const itemId in cartItems) {
+            const quantity = cartItems[itemId];
+            if (quantity > 0) {
+                const itemInfo = foodList.find((product) => product._id === itemId);
+                if (itemInfo) {
+                    total += itemInfo.price * quantity;
+                }
+            }
+        }
+        return total;
+    }, [cartItems, foodList]);
+
+    
+
+   
+
+    useEffect(() => {
+        
+    }, [cartItems, foodList, totalAmount]);
+
     const contextValue = {
         foodList,
         cartItems,
@@ -131,6 +159,8 @@ const StoreContextProvider = (props)=>{
         setCartItems,
         addToCart,
         removeFromCart,
+        
+        totalAmount
     }
 
     return (
