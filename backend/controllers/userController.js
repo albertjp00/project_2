@@ -2,13 +2,15 @@ const User = require('../models/user')
 const Product = require('../models/product')
 const Cart = require('../models/cart')
 
+const bcrypt = require('bcrypt')
 
-const test = (req,res)=>{
-    console.log("test working");
-    res.json("In test")
-}
+const jwt = require('jsonwebtoken')
+
+require('dotenv').config()
 
 
+
+// User Login
 const login = async (req,res) =>{
     try {
         console.log(req.body);
@@ -19,7 +21,12 @@ const login = async (req,res) =>{
 
     if(user){
         if(user.password == password){
-            return res.json(user)
+            // const token = jwt.sign({userId : user._id},process.env.secret_key,{expiresIn:'1h'})
+
+            // res.cookie("token",token,{
+
+            // })
+            return res.json({success:true})
         }else{
             return res.json({message:"Password is incorrect"})
         }
@@ -32,7 +39,7 @@ const login = async (req,res) =>{
     }
 }
 
-
+// User rgeister
 const register = async (req,res)=>{
     try {
         console.log(req.body);
@@ -147,7 +154,7 @@ const cartRemove = async (req,res)=>{
 
 
 module.exports = {
-    test,
+  
     login,
     register,
     getProducts,

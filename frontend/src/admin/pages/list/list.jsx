@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react'
 import './list.css'
 import { toast } from 'react-toastify'
 import AdminNavbar from '../../components/navbar/navbar'
-import { Routes } from 'react-router-dom'
+import {  NavLink, Routes } from 'react-router-dom'
 
 const List = () => {
 
@@ -86,9 +86,12 @@ const List = () => {
                     <p>{item.name}</p>
                     <p>{item.category}</p>
                     <p>{item.price}</p>
-                    <p>
+                    
                       <div className="action">
-                        <button className='list-button'>Edit</button>
+                        <NavLink to={`/admin/dashboard/edit/${item._id}`} >
+                          <button className='list-button'>Edit</button>
+                        </NavLink>
+                        
                         {item.status=="listed" ? (
                         <button className='list-button' onClick={()=>unListItem(item._id)}>Unlist</button>
                         ):
@@ -96,7 +99,7 @@ const List = () => {
                         }
                       </div>
                       
-                    </p>
+                    
                 </div>
             )
         })}

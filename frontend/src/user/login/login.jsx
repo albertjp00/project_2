@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import './login.css'
 import { Link, useNavigate } from 'react-router-dom'
 import axios from 'axios'
+import { toast } from 'react-toastify'
 
 const Login = () => {
 
@@ -18,14 +19,18 @@ const Login = () => {
     const {email,password} = data
 
     try {
-      const response = await axios.post('http://localhost:2000/login',{
+      const response = await axios.post('http://localhost:2000/user/login',{
       email,password
     })
 
-    console.log("login succcess" ,response.data);
+    if(response.data.success){
+      navigate('/user/home')
+    }else{
+      toast.error("Incorrect Password",{autoClose:1500})
+    }
     
 
-    navigate('/home')
+    
 
     } catch (error) {
       console.log(error);

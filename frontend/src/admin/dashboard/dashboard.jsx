@@ -5,6 +5,7 @@ import Sidebar from '../components/sidebar/sidebar'
 import Add from '../pages/add/add'
 import { Route, Routes } from 'react-router-dom'
 import List from '../pages/list/list'
+import Edit from '../pages/edit/edit'
 
 
 const Dashboard = () => {
@@ -17,7 +18,7 @@ const Dashboard = () => {
           <Routes>
             <Route path="add" element={<Add />} />
             <Route path="list" element={<List />} />
- 
+            <Route path='edit/:id' element={<Edit />} />
           </Routes>
         </div>
       </div>

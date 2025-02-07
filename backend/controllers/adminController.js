@@ -66,10 +66,49 @@ const listItem = async  (req,res) =>{
     
 }
 
+const getEdit = async(req,res)=>{
+    let id = req.query.id
+    console.log(id);
+    
+    const product = await Product.findById(id)
+
+    res.json({success:true,product:product})
+}
+
+const editItem = async (req,res)=>{
+    try {
+        let id = req.query.id
+    
+    
+    const {name,description,price,category}  = req.body
+    let product = await Product.findById(id)
+
+    product.name = name
+    product.description = description
+    product.price = price
+    product.category = category
+
+    if(req.file){
+        product.image = req.file.filename
+    }
+    await product.save()
+    
+
+    res.json({success:true})
+
+    } catch (error) {
+        console.log(error);
+        
+    }
+
+}
+
 
 module.exports ={
     addProduct,
     getList,
     unlist,
-    listItem
+    listItem,
+    editItem,
+    getEdit
 }

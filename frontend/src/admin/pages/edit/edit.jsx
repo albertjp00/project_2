@@ -1,8 +1,177 @@
-import React from 'react'
+import React, {  useContext, useEffect, useState } from 'react'
+import './edit.css'
+import { AdminAssets } from '../../../adminAssets/assets'
+
+import axios from 'axios'
+import { toast } from 'react-toastify'
+import { StoreContext } from '../../../context/storeContext'
+import { useNavigate, useParams } from 'react-router-dom'
+
 
 const Edit = () => {
+
+    const [image,setImage] = useState(false)
+
+    const [data,setData] = useState({
+        name:"",
+        description:"",
+        price:"",
+        category:"Salad",
+        
+    })
+
+    const {foodList} = useContext(StoreContext)
+
+    const {id} = useParams() 
+
+    const navigate = useNavigate()
+
+
+    const onChangeHandler = (e) =>{
+        const name = e.target.name;
+        const value = e.target.value;
+        setData((data)=>({...data,[name]:value}))
+    }
+
+    const validateForm = () =>{
+        const {name,description,price,category} = data
+
+        if(!name.trim()){
+            toast.error("Name is required")
+            return false
+        }
+        if(!description.trim()){
+            toast.error("Description is required")
+            return false
+        }
+
+        if(!price || isNaN(price) || price<0){
+            toast.error("Invalid Price")
+            return
+        }
+        if(!category.trim()){
+            toast.error("Category is required")
+            return false
+        }
+        // if (!image || !data.image) {
+        //     toast.error("Image is required.");
+        //     return false;
+        // }
+
+        return true
+
+    }
+
+    useEffect(() => {
+        const fetchList = async () => {
+            try {
+                let response = await axios.get(`http://localhost:2000/admin/getEdit?id=${id}`);
+    
+                if (response.data.success) {
+                   
+                    setData(response.data.product);
+                }
+            } catch (error) {
+                console.log(error);
+            }
+        };
+    
+        fetchList(); 
+    }, [id]); 
+    
+
+    const onSubmitHandler = async  (e)=>{
+        e.preventDefault()
+
+        if(!validateForm()){
+            return
+        }
+
+        const formData = new FormData()
+
+        formData.append("name",data.name)
+        formData.append("description",data.description)
+        formData.append("price",data.price)
+        formData.append("category",data.category)
+        formData.append("image",image)
+
+        try{
+        const response = await axios.post(`http://localhost:2000/admin/editItem?id=${id}`,
+            formData,
+            {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+            }
+        )
+        console.log(response.data.success);
+        
+
+        if(response.data.success){
+            setData({
+                name:"",
+                description:"",
+                price:"",
+                category:""
+            })
+            setImage(false)
+            toast.success("Updated Succesfully",{autoClose:1500})
+            navigate('/admin/dashboard/list')
+        }else{
+            toast.error(response.data.message || "Failed to add product");
+        }
+    }catch(error){
+        console.log(error);
+        
+    }
+    }
+
+
   return (
-    <div>
+    
+
+    <div className='add'>
+        
+                <form onSubmit={onSubmitHandler} className="flex-col">
+            <div className="add-img-upload flex-col">
+                <p>Upload Image</p>
+                <label htmlFor="image">
+                    <img src={image ? URL.createObjectURL(image):`http://localhost:2000/admin/image/${data.image}`} alt="" />
+                </label>
+                <input onChange={(e)=>setImage(e.target.files[0])} type="file" id='image'  hidden />
+            </div>
+            <div className="add-product-name flex-col">
+                <p>Product Name</p>
+                <input onChange={onChangeHandler} value={data.name} type="text" name='name' placeholder='Type here' />
+            </div>
+            <div className="add-product-description flex-col">
+                <p>Product Description</p>
+                <textarea onChange={onChangeHandler} value={data.description} name="description" rows="6" placeholder='Write content here'></textarea>
+            </div>
+            <div className="add-category-price">
+                <div className="add-category flex-col">
+                    <p>Product Category</p>
+                    <select onChange={onChangeHandler} value={data.category} name="category">
+                        <option value="Salad">Salad</option>
+                        <option value="Rolls">Rolls</option>
+                        <option value="Desert">Desert</option>
+                        <option value="Sandwich">Sandwich</option>
+                        <option value="Cake">Cake</option>
+                        <option value="Pure veg">Pure Veg</option>
+                        <option value="Pasta">Pasta</option>
+                        <option value="Noodles">Noodles </option>
+                    </select>
+                </div>
+                <div className="add-price flex-col">
+                    <p>Product Price</p>
+                    <input onChange={onChangeHandler} value={data.price} type="number" name="price" placeholder='$20' />
+                </div>
+                
+            </div>
+            <button type='submit' className='add-button'>Update</button>
+        </form>
+       
+        
       
     </div>
   )

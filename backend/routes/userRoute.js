@@ -4,7 +4,7 @@ const user = express.Router()
 
 const cors = require('cors')
 
-const {test, register, login, getProducts, cartAdd, loadCart, cartRemove} = require('../controllers/userController')
+const { register, login, getProducts, cartAdd, loadCart, cartRemove} = require('../controllers/userController')
 
 
 user.use(
@@ -17,7 +17,6 @@ user.use(
 user.use(express.json())
 
 
-user.get('/',test)
 
 user.post('/login',login)
 
