@@ -13,26 +13,36 @@ require('dotenv').config()
 // User Login
 const login = async (req,res) =>{
     try {
-        console.log(req.body);
+        
     
     const {email,password} = req.body
+    console.log(password);
+    
 
     const user = await User.findOne({email})
 
-    if(user){
-        if(user.password == password){
-            // const token = jwt.sign({userId : user._id},process.env.secret_key,{expiresIn:'1h'})
+    if(!user){
+        return res.json({message:"Invalid Email"})
+    }
 
-            // res.cookie("token",token,{
+    const valid = await bcrypt.compare(password,user.password)
 
-            // })
+    
+        if(valid){
+            const token = jwt.sign({userId : user._id},process.env.secret_key,{expiresIn:'1h'})
+
+            res.cookie("token",token,{
+                httpOnly:true
+            })
+            console.log(user.password);
+
+            
+            
             return res.json({success:true})
         }else{
-            return res.json({message:"Password is incorrect"})
+            return res.json({success:false,message:"Incorrect Password"})
         }
-    }else{
-        return res.json({message:"Email is incorrect"})
-    }
+    
     } catch (error) {
         console.log(error);
         
@@ -46,19 +56,22 @@ const register = async (req,res)=>{
         
         const {name,email,password} = req.body
 
-        // const existingUser = await User.find({email})
+        const existingUser = await User.findOne({email:email})
+        console.log(existingUser);
         
 
-        // if(existingUser){
-        //     console.log("user exists");
+        if(existingUser){
+            console.log("user exists");
 
-        //     return res.status(400).json({message:'User already exists'})
-        // }
+            res.json({success:false,message:'User already exists'})
+        }
 
-        const user = new User({name,email,password})
+        const hash = 10
+        const hashedPassword = await bcrypt.hash(password,hash)
+        const user = new User({name,email,password:hashedPassword})
         await user.save()
 
-        return res.json(user)
+        return res.json({success:true,message:"Registration Succesfull"})
 
 
 

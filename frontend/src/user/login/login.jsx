@@ -4,6 +4,8 @@ import { Link, useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import { toast } from 'react-toastify'
 
+
+
 const Login = () => {
 
   const navigate = useNavigate()
@@ -13,8 +15,25 @@ const Login = () => {
     password:''
   })
 
+  const validate = ()=>{
+
+    const {email,password} = data
+
+    if(!email || !password){
+      toast.error("All fileds required",{autoClose:1500})
+      return false
+    }
+
+    return true
+    
+  }
+
   const handleSubmit = async (e)=>{
     e.preventDefault()
+
+    if(!validate()){
+      return
+    }
     
     const {email,password} = data
 
@@ -22,11 +41,16 @@ const Login = () => {
       const response = await axios.post('http://localhost:2000/user/login',{
       email,password
     })
-
+    
     if(response.data.success){
-      navigate('/user/home')
+      toast.success("Login Succesfull",{autoClose:1500})
+      setTimeout(()=>{
+        navigate('/user/home')
+      },1500)
     }else{
-      toast.error("Incorrect Password",{autoClose:1500})
+      
+      
+      toast.error(response.data.message,{autoClose:1500})
     }
     
 
@@ -62,7 +86,7 @@ const Login = () => {
                 </div>
                 
             </form>
-            <p>Dont have an account <Link to='/register'>Register</Link></p>
+            <p>Dont have an account <Link to='/user/register'>Register</Link></p>
           
           </div>
         

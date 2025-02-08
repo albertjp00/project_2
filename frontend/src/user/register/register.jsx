@@ -2,6 +2,9 @@ import React, { useState } from 'react'
 import axios from 'axios'
 import './register.css'
 import { Link, useNavigate } from 'react-router-dom'
+import { toast } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css';
+
 
 const Register = () => {
 
@@ -14,18 +17,61 @@ const Register = () => {
     password:''
   }) 
 
+  const validate = () =>{
+
+    const {name,email,password} = data
+    
+    
+
+    if(!name.trim()){
+      toast.error('All Fields required',{autoClose:1500})
+      return false
+    }
+
+    if(!email.trim()){
+      toast.error('All Fields required',{autoClose:1500})
+      return false
+    }
+
+    if(!password.trim()){
+      toast.error('All Fields required',{autoClose:1500})
+      return false
+    }
+
+    if(password.length<6){
+      toast.error("Password must be at least 6 characters long.",{autoClose:2000})
+        return false
+    }
+
+    return true
+  }
+
   const handleSubmit = async (e) =>{
     e.preventDefault()
+
+    if(!validate()){
+      return 
+    }
 
     const {name,email,password} = data
 
     try {
-      const response = await axios.post('http://localhost:2000/register',{
-        name , email , password
+      const response = await axios.post('http://localhost:2000/user/register',{
+        name , 
+        email , 
+        password
       })
 
-      console.log('Registration Succesfull', response.data);
-      navigate('/login')
+      if(response.data.success){
+        toast.success(response.data.message,{autoClose:1500})  
+        setTimeout(()=>{
+          navigate('/user/login') 
+        },1500)      
+        
+      }else{
+        toast.error(response.data.message,{autoClose:1500})
+      }
+      
       
     } catch (error) {
       console.log("registration",error);
@@ -59,7 +105,7 @@ const Register = () => {
                 </div>
                 
             </form>
-            <p>Already  have an account <Link to='/login'>Login</Link></p>
+            <p>Already  have an account <Link to='/user/login'>Login</Link></p>
           
           </div>
     </div>
