@@ -13,6 +13,10 @@ const {mongoose} = require('mongoose')
 
 const dotenv = require('dotenv').config()
 
+const cookieParser = require('cookie-parser')
+
+app.use(cookieParser())
+
 const userRoute = require('./routes/userRoute')
 
 const adminRoute = require('./routes/adminRoute')

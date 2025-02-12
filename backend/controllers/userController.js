@@ -10,10 +10,11 @@ require('dotenv').config()
 
 
 
+
+
 // User Login
 const login = async (req,res) =>{
     try {
-        
     
     const {email,password} = req.body
     console.log(password);
@@ -34,6 +35,9 @@ const login = async (req,res) =>{
             res.cookie("token",token,{
                 httpOnly:true
             })
+
+            console.log(req.cookie);
+            
             console.log(user.password);
 
             
@@ -49,7 +53,7 @@ const login = async (req,res) =>{
     }
 }
 
-// User rgeister
+// User register
 const register = async (req,res)=>{
     try {
         console.log(req.body);
@@ -90,7 +94,6 @@ const getProducts  = async (req,res)=>{
         res.json({success:true,products:products})
     } catch (error) {
         console.log(error);
-        
     }
 }
 
@@ -98,8 +101,12 @@ const getProducts  = async (req,res)=>{
 const loadCart = async (req,res) =>{
     try {
 
-        let userId  = 1 
+        let token = req.cookies.token
+        
+        let decoded  =   jwt.decode(token,process.env.secret_key)
+        let userId = decoded.userId
         const cartData = await Cart.find({userId})
+        
         
         
         res.json({success:true,cartData:cartData})
@@ -112,13 +119,22 @@ const loadCart = async (req,res) =>{
 const cartAdd = async (req,res)=>{
     try {
         let productId = req.body.itemId
-        let userId = 1
+
+        const token = req.cookies.token
         
         
-        let cartItem = await Cart.findOne({productId:productId})
+        
+        const decoded = jwt.decode(token,process.env.secret_key)
+        console.log(decoded.userId);
+        let userId = decoded.userId
+        
+        
+        let cartItem = await Cart.findOne({userId,productId})
+        console.log("cartItemssssss",cartItem);
+        
         if(!cartItem){
             cartItem = new Cart({
-                userId,
+                userId:userId,
                 productId:productId,
                 quantity:req.body.quantity
             })

@@ -15,6 +15,10 @@
     font-size: max(1vw,12px);
 }
 
+.cart-items-title p{
+    cursor: pointer;
+}
+
 .cart-items-item{
     margin: 25px 0px;
     color: black;
@@ -28,6 +32,10 @@
     height: 1px;
     background-color: #e2e2e2;
     border: none;
+}
+
+.remove{
+
 }
 
 
