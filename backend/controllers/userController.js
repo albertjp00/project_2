@@ -5,7 +5,7 @@ const Cart = require('../models/cart')
 const bcrypt = require('bcrypt')
 
 const jwt = require('jsonwebtoken')
-
+const Order = require('../models/order')
 require('dotenv').config()
 
 
@@ -27,6 +27,8 @@ const login = async (req,res) =>{
     }
 
     const valid = await bcrypt.compare(password,user.password)
+    
+    
 
     
         if(valid){
@@ -180,6 +182,50 @@ const cartRemove = async (req,res)=>{
     }
 }
 
+const placeOrder = async (req,res)=>{
+
+    const token = req.cookies.token
+    const decoded = jwt.decode(token,process.env.secret_key)
+    let userId = decoded.userId
+
+    let orderData = req.body
+    console.log(orderData.items);
+
+    let order = await Order.findOne({userId})
+
+    if(!order){
+        let order = await Order({
+            userId:userId,
+            items:req.body.items,
+            amount : req.body.amount,
+            address: req.body.address
+        })
+        order.save()
+    }else{
+        order.amount = req.body.amount
+        order.items = req.body.items
+        order.address = req.body.address
+        
+    }
+    await order.save()
+    
+    console.log(order);
+    
+
+
+}
+
+const myOrders = async (req,res)=>{
+
+    let token = req.cookies.token
+    let decoded = jwt.decode(token,process.env.secret_key)
+    let userId =  decoded.userId
+
+    let orders = await Order.find({userId})
+
+    // console.log(order);
+    res.json({success:true,orders:orders})
+}
 
 
 module.exports = {
@@ -189,7 +235,9 @@ module.exports = {
     getProducts,
     cartAdd,
     loadCart,
-    cartRemove
+    cartRemove,
+    placeOrder,
+    myOrders
 }
 
 

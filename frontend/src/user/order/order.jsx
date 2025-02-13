@@ -99,7 +99,19 @@ const Order = () => {
          })
         //  console.log(orderItems);
 
-        let orderData = 
+        let orderData = {
+            address:data,
+            items:orderItems,
+            amount : totalAmount + 2
+        }
+
+        let response = await axios.post('http://localhost:2000/user/placeOrder',
+            orderData
+        )
+
+        if(response.data.success){
+            
+        }
          
     }
 

@@ -10,9 +10,11 @@ import Register from './user/register/register'
 import Home from './user/home/home'
 import Cart from './user/cart/cart';
 import Order from './user/order/order';
+import MyOrders from './user/myOrders/myOrders';
 
 import AdminLogin from './admin/login/login'
 import Dashboard from './admin/dashboard/dashboard'
+
 
 
 
@@ -39,6 +41,7 @@ function App() {
         <Route path='/user/home' element={<Home />} />
         <Route path='/user/cart' element={<Cart/>}/>
         <Route path='/user/order' element={<Order />}/>
+        <Route path='/user/myOrders' element={<MyOrders />}/>
     
 
 
