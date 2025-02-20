@@ -1,15 +1,35 @@
-import React, { useContext } from 'react'
+import React, { useContext, useEffect } from 'react'
 import './cart.css'
 import { StoreContext } from '../../context/storeContext'
 import Navbar from '../../userComponents/navbar/navbar'
 import { useNavigate } from 'react-router-dom'
+import { toast } from 'react-toastify'
 
 const Cart = () => {
 
-  const {cartItems,foodList,removeFromCart,getTotalAmount,totalAmount} = useContext(StoreContext)
+  const {cartItems,foodList,removeFromCart,getTotalAmount,totalAmount,token} = useContext(StoreContext)
 
   
   const navigate = useNavigate()
+  
+  
+
+  const toPlaceOrder = ()=>{
+    console.log("cartItem",cartItems);
+    
+    if(totalAmount === 0){
+      toast.error("Add Items")
+    }else{
+      navigate('/user/order')
+    }
+  }
+
+
+  useEffect(()=>{
+    if(!token){
+      navigate('/user/login')
+    }
+  },[token])
   
   
   return (
@@ -70,7 +90,8 @@ const Cart = () => {
             </div>
             
           </div>
-          <button onClick={()=>navigate('/user/order')}>Proceed to Checkout</button>
+          <button onClick={()=>toPlaceOrder()}>Proceed to Checkout</button>
+        
         </div>
         <div className="cart-promocode">
           <div>

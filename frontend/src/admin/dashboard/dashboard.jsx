@@ -6,6 +6,7 @@ import Add from '../pages/add/add'
 import { Route, Routes } from 'react-router-dom'
 import List from '../pages/list/list'
 import Edit from '../pages/edit/edit'
+import Orders from '../pages/orders/orders'
 
 
 const Dashboard = () => {
@@ -19,6 +20,7 @@ const Dashboard = () => {
             <Route path="add" element={<Add />} />
             <Route path="list" element={<List />} />
             <Route path='edit/:id' element={<Edit />} />
+            <Route path='orders' element={<Orders />}/>
           </Routes>
         </div>
       </div>

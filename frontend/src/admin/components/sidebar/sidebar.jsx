@@ -15,7 +15,7 @@ const Sidebar = () => {
                 <img src={AdminAssets.order_icon} alt="" />
                 <p>List Items</p>
             </NavLink>
-            <NavLink to='/admin/orders' className="sidebar-option">
+            <NavLink to='/admin/dashboard/orders' className="sidebar-option">
                 <img src={AdminAssets.order_icon} alt="" />
                 <p>Orders</p>
             </NavLink>

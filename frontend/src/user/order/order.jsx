@@ -4,10 +4,11 @@ import Navbar from '../../userComponents/navbar/navbar'
 import { StoreContext } from '../../context/storeContext'
 import axios from 'axios'
 import { toast } from 'react-toastify'
+import { useNavigate } from 'react-router-dom'
 
 const Order = () => {
 
-    const {totalAmount,foodList,cartItems} = useContext(StoreContext)
+    const {totalAmount,foodList,cartItems,setCartItems,token} = useContext(StoreContext)
 
     const [data,setData] = useState({
         firstName:"",
@@ -20,6 +21,8 @@ const Order = () => {
         phone:""
 
     })
+
+    const navigate = useNavigate()
 
     
 
@@ -110,23 +113,120 @@ const Order = () => {
         )
 
         if(response.data.success){
-            
+            toast.success("Order Placed",{autoClose:1500})
         }
          
     }
 
+    const handlePayment = async (e) => {
+
+
+        console.log("Herererererer");
+        
+        e.preventDefault()
+
+        try {
+          // Step 1: Create an order on the backend
+          console.log("handle");    
+
+          let orderItems = []
+          foodList.map((item)=>{
+             if(cartItems[item._id]>0){
+                 let itemInfo = item
+                 
+                 
+                 itemInfo['quantity'] = cartItems[item._id]
+                 orderItems.push(itemInfo)
+             }
+          })
+
+          let orderData = {
+            address:data,
+            items:orderItems,
+            amount : totalAmount + 2
+        }
+
+
+          
+          const response = await axios.post("http://localhost:2000/user/placeOrder", {
+            orderData,
+            amount: totalAmount,
+            headers: { Authorization: `Bearer ${token}` } 
+          });
     
-    // useEffect(()=>{
+          if (!response.data.success) {
+            toast.error("Failed to create order");
+            return;
+          }
+
+          
+          const razorpayKey = import.meta.env.RAZORPAY_KEY; // ✅ Correct way in Vite
+
+          console.log("verify",razorpayKey);
+     
+          // Step 2: Configure Razorpay
+          const options = {
+            key: razorpayKey, // Replace with your Key ID
+            amount: response.data.order.amount,
+            currency: "INR",
+            name: "Your Company Name",
+            description: "Test Transaction",
+            order_id: response.data.razorpayOrder.id,
+            handler: async function (response) {
+              const verifyRes = await axios.post(
+                "http://localhost:2000/user/verifyPayment",
+                response
+              );
+    
+              if (verifyRes.data.success) {
+                toast.success("Payment Successful!",{autoClose:1500});
+                setTimeout(()=>{
+                    navigate('/user/order')
+                },1000)
+              } else {
+                toast.error("Payment verification failed");
+              }
+            },
+            prefill: {
+              name: "Test User",
+              email: "testuser@example.com",
+              contact: "9999999999",
+            },
+            theme: {
+              color: "#3399cc",
+            },
+          };
+    
+          // Step 3: Open Razorpay Checkout
+          const rzp = new window.Razorpay(options);
+          rzp.open();
+        } catch (error) {
+          console.error("Error during payment:", error);
+          toast.error("Something went wrong. Please try again.");
+        }
+      };
+
+    
+    useEffect(()=>{
         
+        if(!token){
+            navigate('/user/login')
+        }
+        setCartItems({})
+
+        if(Object.keys(cartItems).length === 0){
+            navigate("/user/home")
+        }
+
         
-    // },[data])
+    },[cartItems])
 
 
 
   return (
     <div className='order-page'>
       <Navbar />
-      <form onSubmit={placeOrder} className="place-order">
+      <form onClick={handlePayment} className="place-order">
         <div className="place-order-left">
             <p className="title">Delivery Information</p>
             <div className="multi-fields">

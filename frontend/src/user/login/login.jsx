@@ -1,14 +1,17 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import './login.css'
 import { Link, useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import { toast } from 'react-toastify'
+import { StoreContext } from '../../context/storeContext'
 
 
 
 const Login = () => {
 
   const navigate = useNavigate()
+
+  const {setToken} = useContext(StoreContext)
 
   const [data,setData] = useState({
     email:'',
@@ -43,6 +46,8 @@ const Login = () => {
     })
     
     if(response.data.success){
+      setToken(response.data.token)
+      localStorage.setItem("token",response.data.token)
       toast.success("Login Succesfull",{autoClose:1500})
       setTimeout(()=>{
         navigate('/user/home')

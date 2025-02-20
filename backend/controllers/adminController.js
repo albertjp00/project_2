@@ -1,5 +1,5 @@
 const  Product = require("../models/product");
-
+const Order = require('../models/order')
 
 
 
@@ -104,11 +104,43 @@ const editItem = async (req,res)=>{
 }
 
 
+const listOrders = async (req,res)=>{
+    try {
+        // console.log("orderss");
+        
+        let orders = await Order.find()
+    console.log(orders);
+    
+
+    if(orders){
+        res.json({success:true,orders:orders})
+    }
+    } catch (error) {
+        console.log(error);
+           
+    }
+}
+
+const updateStatus = async (req,res)=>{
+    try {
+        let id = req.body.orderId
+        
+        let order = await Order.findByIdAndUpdate(id,{status : req.body.status})
+        res.json({success:true,message:"Status Updated"})
+    } catch (error) {
+        console.log(error);
+        res.json({success:false,message:"Something went wrong"})
+        
+    }
+}
+
 module.exports ={
     addProduct,
     getList,
     unlist,
     listItem,
     editItem,
-    getEdit
+    getEdit,
+    listOrders,
+    updateStatus
 }

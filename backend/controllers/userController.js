@@ -9,7 +9,14 @@ const Order = require('../models/order')
 require('dotenv').config()
 
 
+const razorpay = require('razorpay')
 
+const razorpayInstance = new razorpay({
+    key_id:process.env.RAZORPAY_KEY_ID,
+    key_secret:process.env.RAZORPAY_KEY_SECRET
+})
+
+const crypto = require('crypto')
 
 
 // User Login
@@ -17,7 +24,6 @@ const login = async (req,res) =>{
     try {
     
     const {email,password} = req.body
-    console.log(password);
     
 
     const user = await User.findOne({email})
@@ -33,18 +39,8 @@ const login = async (req,res) =>{
     
         if(valid){
             const token = jwt.sign({userId : user._id},process.env.secret_key,{expiresIn:'1h'})
-
-            res.cookie("token",token,{
-                httpOnly:true
-            })
-
-            console.log(req.cookie);
             
-            console.log(user.password);
-
-            
-            
-            return res.json({success:true})
+            return res.json({success:true,token:token})
         }else{
             return res.json({success:false,message:"Incorrect Password"})
         }
@@ -92,7 +88,7 @@ const getProducts  = async (req,res)=>{
     try {
         console.log("getting");
         
-        let products = await Product.find({})
+        let products = await Product.find()
         res.json({success:true,products:products})
     } catch (error) {
         console.log(error);
@@ -182,16 +178,110 @@ const cartRemove = async (req,res)=>{
     }
 }
 
-const placeOrder = async (req,res)=>{
+const placeOrder = async (req, res) => {
+    try {
+        
 
-    const token = req.cookies.token
+        let token = req.cookies.token
+        
+        let decoded  =   jwt.decode(token,process.env.secret_key)
+        let userId = decoded.userId
+
+        // ✅ Extract `orderData`
+        const { orderData } = req.body;
+        if (!orderData || !orderData.items || !orderData.address) {
+            return res.status(400).json({ success: false, message: "Missing order data" });
+        }
+
+        console.log("Received Order Data:", orderData);
+
+        // ✅ Create or Update Order
+        let order = await Order.findOne({ userId: userId });
+
+        if (!order) {
+            order = new Order({
+                userId: userId,
+                items: orderData.items,
+                amount: orderData.amount,
+                address: orderData.address,
+            });
+        } else {
+            order.items = orderData.items;
+            order.amount = orderData.amount;
+            order.address = orderData.address;
+        }
+
+        await order.save();
+
+        // ✅ Delete Cart After Order Placement
+        await Cart.findOneAndDelete({ userId: userId });
+
+        console.log("Order Placed Successfully:", order);
+
+        if (!process.env.RAZORPAY_KEY_ID || !process.env.RAZORPAY_KEY_SECRET) {
+            console.log("key required");
+            
+            return res.status(500).json({ success: false, message: "Razorpay API keys are missing" });
+        }
+
+        // ✅ Create Razorpay Order
+        const options = {
+            amount: orderData.amount * 100, // Convert amount to paise
+            currency: "INR",
+            receipt: `order_rcptid_${Math.floor(Math.random() * 10000)}`,
+        };
+
+        const razorpayOrder = await razorpayInstance.orders.create(options);
+
+        return res.json({ success: true, order, razorpayOrder });
+    } catch (error) {
+        console.error("Error in placeOrder:", error);
+        return res.status(500).json({ success: false, message: "Internal Server Error" });
+    }
+};
+
+
+
+const verifyPayment =  async (req, res) => {
+    try {
+        console.log("verify");
+    
+    const { razorpay_order_id, razorpay_payment_id, razorpay_signature } =
+      req.body;
+  
+    const secret = process.env.RAZORPAY_KEY_SECRET;
+    const generated_signature = crypto
+      .createHmac("sha256", secret)
+      .update(razorpay_order_id + "|" + razorpay_payment_id)
+      .digest("hex");
+  
+    if (generated_signature === razorpay_signature) {
+      res.json({ success: true, message: "Payment verified successfully" });
+    } else {
+      res.json({ success: false, message: "Invalid signature" });
+    }
+    } catch (error) {
+        console.log(error);
+        
+    }
+  };
+
+
+const payonline = async (res,req)=>{
+    try {
+        const token = req.cookies.token
     const decoded = jwt.decode(token,process.env.secret_key)
     let userId = decoded.userId
 
-    let orderData = req.body
-    console.log(orderData.items);
 
-    let order = await Order.findOne({userId})
+
+    let orderData = req.body
+    console.log(orderData);
+
+
+
+    let order = await Order.findOne({userId:userId})
+    
 
     if(!order){
         let order = await Order({
@@ -200,19 +290,33 @@ const placeOrder = async (req,res)=>{
             amount : req.body.amount,
             address: req.body.address
         })
-        order.save()
+        await order.save()
     }else{
         order.amount = req.body.amount
         order.items = req.body.items
         order.address = req.body.address
-        
+
     }
     await order.save()
+
+    let cartDelete = await Cart.findOneAndDelete({userId:userId})
     
     console.log(order);
-    
 
+    const options = {
+        amount: req.body.amount * 100, // Amount in paise (₹1 = 100 paise)
+        currency: "INR",
+        receipt: `order_rcptid_${Math.floor(Math.random() * 10000)}`,
+      };
+  
+      const razorpayOrder = await razorpay.orders.create(options);
+      res.json({ success: true, orders:razorpayOrder });
 
+        
+    } catch (error) {
+        console.log(error);
+        
+    }
 }
 
 const myOrders = async (req,res)=>{
@@ -237,6 +341,7 @@ module.exports = {
     loadCart,
     cartRemove,
     placeOrder,
+    verifyPayment,
     myOrders
 }
 

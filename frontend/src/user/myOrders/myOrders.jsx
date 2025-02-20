@@ -1,14 +1,20 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import './myOrders.css'
 import Navbar from '../../userComponents/navbar/navbar'
 import axios from 'axios'
 import { toast } from 'react-toastify'
 import { assets } from '../../assets/assets'
+import { StoreContext } from '../../context/storeContext'
+import { useNavigate } from 'react-router-dom'
 
 const MyOrders = () => {
 
     const [data,setData] = useState([])
 
+    const {token} = useContext(StoreContext)
+
+    const navigate = useNavigate()
+ 
     const fetchOrders = async ()=>{
         let response = await axios.get('http://localhost:2000/user/myOrders')
 
@@ -22,7 +28,9 @@ const MyOrders = () => {
     }
 
     useEffect(()=>{
+        
         fetchOrders()
+        
     },[])
 
   return (

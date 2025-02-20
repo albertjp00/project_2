@@ -15,6 +15,10 @@ const StoreContextProvider = (props)=>{
     
     const [foodList,setFoodList] = useState([])
 
+    const [token,setToken] = useState(localStorage.getItem('token') || "")
+
+    
+
     const loadCartData =  async ()=>{
         try {
             
@@ -149,8 +153,15 @@ const StoreContextProvider = (props)=>{
    
 
     useEffect(() => {
+
+        const storedToken = localStorage.getItem("token")
+        if(storedToken){
+            setToken(storedToken)
+        }
         
     }, [cartItems, foodList, totalAmount]);
+
+
 
     const contextValue = {
         foodList,
@@ -159,7 +170,8 @@ const StoreContextProvider = (props)=>{
         setCartItems,
         addToCart,
         removeFromCart,
-        
+        token,
+        setToken,
         totalAmount
     }
 

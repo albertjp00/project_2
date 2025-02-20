@@ -30,31 +30,31 @@ function App() {
   return (
     <>
     
-    <div className="app">
-    <ToastContainer />
-    
-    
-    
-    <Routes>
-        <Route path='/user/login' element={<Login />} />
-        <Route path='/user/register' element={<Register />}/>
-        <Route path='/user/home' element={<Home />} />
-        <Route path='/user/cart' element={<Cart/>}/>
-        <Route path='/user/order' element={<Order />}/>
-        <Route path='/user/myOrders' element={<MyOrders />}/>
-    
+      <div className="app">
+      <ToastContainer />
+      
+      
+      
+      <Routes>
+          <Route path='/user/login' element={<Login />} />
+          <Route path='/user/register' element={<Register />}/>
+          <Route path='/user/home' element={<Home />} />
+          <Route path='/user/cart' element={<Cart/>}/>
+          <Route path='/user/order' element={<Order />}/>
+          <Route path='/user/myOrders' element={<MyOrders />}/>
+      
 
 
-        {/* admin */}
+          {/* admin */}
 
-        <Route path='/admin/login' element = {<AdminLogin />}/>
-        <Route path='/admin/dashboard/*' element={<Dashboard />}/> 
+          <Route path='/admin/login' element = {<AdminLogin />}/>
+          <Route path='/admin/dashboard/*' element={<Dashboard />}/> 
 
-        {/* <Route path='/admin/add' element={<Add/>}/>
-        <Route path='/admin/list' element={<List/>}/> */}
-          
-          
-    </Routes>
+          {/* <Route path='/admin/add' element={<Add/>}/>
+          <Route path='/admin/list' element={<List/>}/> */}
+            
+            
+      </Routes>
 
         
     </div>

@@ -8,7 +8,7 @@ const FoodItem = ({id,name,price,description,image}) => {
   
 
 const {foodList,cartItems,addToCart,removeFromCart} = useContext(StoreContext)
-console.log(cartItems);
+// console.log(cartItems);
 
 
   return (

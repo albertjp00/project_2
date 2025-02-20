@@ -79,7 +79,7 @@
     cursor: pointer;
 }
 
-@media (max-width:600px){
+@media (max-width:700px){
     .list-table-format{
         width: 400px;
         grid-template-columns: 1fr 3fr 1fr;
