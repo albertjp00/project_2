@@ -16,7 +16,7 @@ const MyOrders = () => {
     const navigate = useNavigate()
  
     const fetchOrders = async ()=>{
-        let response = await axios.get('http://localhost:2000/user/myOrders')
+        let response = await axios.get(`http://localhost:2000/user/myOrders?t=${token}`)
 
         if(response.data.success){
             setData(response.data.orders)

@@ -8,6 +8,8 @@ const jwt = require('jsonwebtoken')
 const Order = require('../models/order')
 require('dotenv').config()
 
+const axios = require('axios')
+
 
 const razorpay = require('razorpay')
 
@@ -99,7 +101,7 @@ const getProducts  = async (req,res)=>{
 const loadCart = async (req,res) =>{
     try {
 
-        let token = req.cookies.token
+        let token = req.query.t
         
         let decoded  =   jwt.decode(token,process.env.secret_key)
         let userId = decoded.userId
@@ -118,7 +120,7 @@ const cartAdd = async (req,res)=>{
     try {
         let productId = req.body.itemId
 
-        const token = req.cookies.token
+        const token = req.body.t
         
         
         
@@ -158,14 +160,18 @@ const cartRemove = async (req,res)=>{
         
         let id = req.body.itemId
         let quantity = req.body.quantity
-        
+        let token = req.body.t
+
+        let decoded = jwt.decode(token,process.env.secret_key)
+        let userId = decoded.userId
+
         if(quantity === 0){
-            let cart = await Cart.deleteOne({productId:id})
+            let cart = await Cart.deleteOne({userId:userId,productId:id})
             
             
             
         }else{
-            let cart = await Cart.findOne({productId:id})
+            let cart = await Cart.findOne({userId:userId,productId:id})
             cart.quantity -=1
             await cart.save()
         }
@@ -181,13 +187,14 @@ const cartRemove = async (req,res)=>{
 const placeOrder = async (req, res) => {
     try {
         
-
-        let token = req.cookies.token
+        console.log(req.body);
+        
+        let token = req.body.t
         
         let decoded  =   jwt.decode(token,process.env.secret_key)
         let userId = decoded.userId
 
-        // ✅ Extract `orderData`
+        
         const { orderData } = req.body;
         if (!orderData || !orderData.items || !orderData.address) {
             return res.status(400).json({ success: false, message: "Missing order data" });
@@ -195,36 +202,38 @@ const placeOrder = async (req, res) => {
 
         console.log("Received Order Data:", orderData);
 
-        // ✅ Create or Update Order
-        let order = await Order.findOne({ userId: userId });
+        
+        let order = await Order.findOne({ userId: userId, status: "Food Processing" });
 
-        if (!order) {
-            order = new Order({
-                userId: userId,
-                items: orderData.items,
-                amount: orderData.amount,
-                address: orderData.address,
-            });
-        } else {
-            order.items = orderData.items;
-            order.amount = orderData.amount;
-            order.address = orderData.address;
-        }
+if (order) {
+    order.items = orderData.items;
+    order.amount = orderData.amount;
+    order.address = orderData.address;
+    await order.save();
+} else {
+    order = new Order({
+        userId: userId,
+        items: orderData.items,
+        amount: orderData.amount,
+        address: orderData.address,
+    });
 
-        await order.save();
+    await order.save();
+}
 
-        // ✅ Delete Cart After Order Placement
+        // Deleteing Cart
         await Cart.findOneAndDelete({ userId: userId });
 
-        console.log("Order Placed Successfully:", order);
+        
+        // console.log("Order Placed Successfully:", newOrder);
 
         if (!process.env.RAZORPAY_KEY_ID || !process.env.RAZORPAY_KEY_SECRET) {
             console.log("key required");
             
-            return res.status(500).json({ success: false, message: "Razorpay API keys are missing" });
+            return res.status(500).json({ success: false });
         }
 
-        // ✅ Create Razorpay Order
+        // Razorpay Order
         const options = {
             amount: orderData.amount * 100, // Convert amount to paise
             currency: "INR",
@@ -321,15 +330,53 @@ const payonline = async (res,req)=>{
 
 const myOrders = async (req,res)=>{
 
-    let token = req.cookies.token
+    let token = req.query.t
     let decoded = jwt.decode(token,process.env.secret_key)
     let userId =  decoded.userId
-
+    
+    
     let orders = await Order.find({userId})
 
     // console.log(order);
     res.json({success:true,orders:orders})
 }
+
+
+const chatbot = async (req, res) => {
+    try {
+      const { message } = req.body;
+      console.log("Received Message:", message);
+
+      const API_KEY = process.env.API_KEY
+
+      const customPrompt = `
+      You are a chatbot for a food delivery service called 'Tomato'. 
+      Your goal is to assist customers with ordering food, tracking deliveries, and answering menu-related questions. 
+      Keep responses friendly, helpful, and focused on food delivery.
+      
+      User: ${message}`
+    ;
+  
+      const response = await axios.post(
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${API_KEY}`,
+        {
+          contents: [{ role: "user", parts: [{ text: customPrompt }] }]
+        }
+      );
+  
+      console.log("Full API Response:", JSON.stringify(response.data, null, 2));
+  
+      
+      const replyParts = response.data.candidates?.[0]?.content?.parts;
+      const reply = replyParts ? replyParts.map(part => part.text).join(" ") : "Sorry, I couldn't understand that.";
+  
+      res.json({ reply });
+    } catch (error) {
+      console.error("Error:", error.response?.data || error.message);
+      res.status(500).json({ error: "Failed to fetch response" });
+    }
+  };
+  
 
 
 module.exports = {
@@ -342,7 +389,8 @@ module.exports = {
     cartRemove,
     placeOrder,
     verifyPayment,
-    myOrders
+    myOrders,
+    chatbot
 }
 
 

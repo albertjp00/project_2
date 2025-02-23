@@ -17,6 +17,8 @@ const cookieParser = require('cookie-parser')
 
 app.use(cookieParser())
 
+app.use(express.json())
+
 const userRoute = require('./routes/userRoute')
 
 const adminRoute = require('./routes/adminRoute')

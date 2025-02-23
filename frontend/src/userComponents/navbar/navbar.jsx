@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom'
 
 const Navbar = () => {
 
-    const [menu,setMenu] = useState("menu")
+    const [menu,setMenu] = useState("home")
 
   return (
     <div className='navbar'>
@@ -14,6 +14,7 @@ const Navbar = () => {
         <ul className='navbar-menu'>
             <Link to="/user/home"><li onClick={()=>setMenu("home")} className={menu==="home"?"active":""}>home</li></Link>
             <li onClick={()=>setMenu("menu")} className={menu==="menu"?"active":""}>menu</li>
+            <li onClick={()=>setMenu("contact-us")} className={menu==="Contact-us"?"active":""}>contact-us</li>
         </ul>
         <div className="navbar-right">
             <img src={assets.search_icon} alt="" />

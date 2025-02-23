@@ -88,6 +88,10 @@ const Order = () => {
         //  }
         console.log(foodList);
         console.log(cartItems);
+
+        if(!cartItems){
+            navigate('/user/home')
+        }
         
         
          let orderItems = []
@@ -121,13 +125,13 @@ const Order = () => {
     const handlePayment = async (e) => {
 
 
-        console.log("Herererererer");
+        
         
         e.preventDefault()
 
         try {
           // Step 1: Create an order on the backend
-          console.log("handle");    
+          
 
           let orderItems = []
           foodList.map((item)=>{
@@ -151,7 +155,8 @@ const Order = () => {
           const response = await axios.post("http://localhost:2000/user/placeOrder", {
             orderData,
             amount: totalAmount,
-            headers: { Authorization: `Bearer ${token}` } 
+            headers: { Authorization: `Bearer ${token}` } ,
+            t : token
           });
     
           if (!response.data.success) {
@@ -160,13 +165,11 @@ const Order = () => {
           }
 
           
-          const razorpayKey = import.meta.env.RAZORPAY_KEY; // ✅ Correct way in Vite
+          const razorpayKey = import.meta.env.RAZORPAY_KEY;
 
-          console.log("verify",razorpayKey);
-     
-          // Step 2: Configure Razorpay
+        //   Configuring  Razorpay
           const options = {
-            key: razorpayKey, // Replace with your Key ID
+            key: razorpayKey, 
             amount: response.data.order.amount,
             currency: "INR",
             name: "Your Company Name",
@@ -179,10 +182,11 @@ const Order = () => {
               );
     
               if (verifyRes.data.success) {
-                toast.success("Payment Successful!",{autoClose:1500});
+                // toast.success("Payment Successful!");
                 setTimeout(()=>{
-                    navigate('/user/order')
+                    navigate('/user/myOrders')
                 },1000)
+                
               } else {
                 toast.error("Payment verification failed");
               }
@@ -212,7 +216,7 @@ const Order = () => {
         if(!token){
             navigate('/user/login')
         }
-        setCartItems({})
+        
 
         if(Object.keys(cartItems).length === 0){
             navigate("/user/home")
@@ -226,7 +230,7 @@ const Order = () => {
   return (
     <div className='order-page'>
       <Navbar />
-      <form onClick={handlePayment} className="place-order">
+      <form onSubmit={handlePayment} className="place-order">
         <div className="place-order-left">
             <p className="title">Delivery Information</p>
             <div className="multi-fields">
@@ -238,8 +242,7 @@ const Order = () => {
                 onChange={onChangeHandler} placeholder='Last Name' />
 
             </div>
-            <input type="email" name='email' value={data.email} 
-            onChange={onChangeHandler} placeholder='Email' />
+            
 
             <input type="text" name='street' value={data.street} 
             onChange={onChangeHandler} placeholder='Street' />

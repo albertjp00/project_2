@@ -23,7 +23,7 @@ const StoreContextProvider = (props)=>{
         try {
             
             
-            const response = await axios.get('http://localhost:2000/user/cart')
+            const response = await axios.get(`http://localhost:2000/user/cart?t=${token}`)
             // console.log(response.data.cartData[0]);
 
 
@@ -61,6 +61,7 @@ const StoreContextProvider = (props)=>{
             const response = await axios.post('http://localhost:2000/user/cartAdd', {
                 itemId: itemId,
                 quantity: newQuantity,
+                t : token
             });
     
             
@@ -88,7 +89,8 @@ const StoreContextProvider = (props)=>{
 
         const response = await axios.post('http://localhost:2000/user/cartRemove',{
             itemId:itemId,
-            quantity:newQuantity
+            quantity:newQuantity,
+            t : token
         })
         
         
