@@ -3,15 +3,40 @@ const express = require("express")
 
 const app = express()
 
+const http = require("http")
+
 const path= require('path')
 
 const port = 2000
 
 const cors = require('cors')
 
-const {mongoose} = require('mongoose')
+const mongoose = require('mongoose')
 
 const dotenv = require('dotenv').config()
+
+const server = http.createServer(app)
+
+const socketIo = require("socket.io")
+
+
+const io = socketIo(server,{
+    cors:{
+        origin:"http://localhost:5173",
+        methods : ["GET","POST"]
+    }
+})
+
+io.on("connection",(socket)=>{
+    console.log("New CLient Connected",socket.id);
+
+    socket.on("disconnect",()=>{
+        console.log("Client disconnected",socket.io);
+    })
+    
+})
+
+app.set("socket.io",io)
 
 const cookieParser = require('cookie-parser')
 
@@ -45,7 +70,7 @@ app.use('/user',userRoute)
 
 app.use('/admin',adminRoute)
 
-app.listen(port,()=>{
+server.listen(port,()=>{
     console.log("started");
     
 })

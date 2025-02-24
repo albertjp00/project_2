@@ -6,6 +6,13 @@ import { toast } from 'react-toastify'
 import { assets } from '../../assets/assets'
 import { StoreContext } from '../../context/storeContext'
 import { useNavigate } from 'react-router-dom'
+import {io} from 'socket.io-client'
+
+
+
+const socket = io("http://localhost:2000", {
+    transports: ["websocket", "polling"]  
+});
 
 const MyOrders = () => {
 
@@ -28,10 +35,31 @@ const MyOrders = () => {
     }
 
     useEffect(()=>{
-        
+        if(!token){
+            navigate("/user/login")
+            return
+        }
+
+        socket.connect()
         fetchOrders()
         
-    },[])
+        console.log("Listening for order updates...");
+        
+        socket.on("updatedStatus",(updatedOrder)=>{
+            console.log("Received update:", updatedOrder);
+            setData((prevData)=>
+                prevData.map((order)=>
+                    order._id === updatedOrder._id ? updatedOrder : order
+                )
+            )
+        })
+
+        return ()=>{
+            socket.off("updatedStatus")
+            socket.disconnect()
+        }
+        
+    },[token])
 
   return (
     <div className='orders-page'>

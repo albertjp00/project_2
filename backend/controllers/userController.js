@@ -331,11 +331,13 @@ const payonline = async (res,req)=>{
 const myOrders = async (req,res)=>{
 
     let token = req.query.t
+
     let decoded = jwt.decode(token,process.env.secret_key)
     let userId =  decoded.userId
     
     
     let orders = await Order.find({userId})
+    
 
     // console.log(order);
     res.json({success:true,orders:orders})

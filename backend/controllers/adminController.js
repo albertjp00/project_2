@@ -1,5 +1,6 @@
 const  Product = require("../models/product");
-const Order = require('../models/order')
+const Order = require('../models/order');
+
 
 
 
@@ -125,7 +126,16 @@ const updateStatus = async (req,res)=>{
     try {
         let id = req.body.orderId
         
-        let order = await Order.findByIdAndUpdate(id,{status : req.body.status})
+        let order = await Order.findById(id)
+
+        order.status = req.body.status
+
+        await order.save()
+        
+        const io = req.app.get("socket.io")
+
+        io.emit("updatedStatus",order)
+
         res.json({success:true,message:"Status Updated"})
     } catch (error) {
         console.log(error);
