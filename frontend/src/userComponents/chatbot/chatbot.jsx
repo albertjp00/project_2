@@ -1,12 +1,15 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import "./Chatbot.css"; 
 import axios from "axios";
 import { assets } from "../../assets/assets";
+import { StoreContext } from "../../context/storeContext";
 
 const Chatbot = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
+
+  const {token} = useContext(StoreContext)
 
   const sendMessage = async () => {
     if (!input.trim()) return;
@@ -15,13 +18,13 @@ const Chatbot = () => {
     setMessages([...messages, userMessage]);
 
     try {
-      const response = await axios.post("http://localhost:5000/user/chatbot", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: input }),
+      const response = await axios.post("http://localhost:2000/user/chatbot", {
+        message:input,
+        t:token
+        
       });
 
-      const data = await response.json();
+      const data = await response.data
       const botMessage = { role: "bot", content: data.reply || "I didn't understand that." };
 
       setMessages([...messages, userMessage, botMessage]);

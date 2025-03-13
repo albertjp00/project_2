@@ -4,6 +4,7 @@ import { StoreContext } from '../../context/storeContext'
 import Navbar from '../../userComponents/navbar/navbar'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
+import Footer from '../../userComponents/footer/footer'
 
 const Cart = () => {
 
@@ -12,7 +13,7 @@ const Cart = () => {
   
   const navigate = useNavigate()
   
-  
+
 
   const toPlaceOrder = ()=>{
     console.log("cartItem",cartItems);
@@ -33,6 +34,7 @@ const Cart = () => {
   
   
   return (
+    <>
     <div className="navbar-cart">
       <Navbar />
    
@@ -105,8 +107,10 @@ const Cart = () => {
       </div>
       
     </div>
-
+        
     </div>
+    <Footer />
+    </>
   )
 }
 

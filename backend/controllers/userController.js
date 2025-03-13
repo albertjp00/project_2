@@ -89,6 +89,34 @@ const register = async (req,res)=>{
 const getProducts  = async (req,res)=>{
     try {
         console.log("getting");
+
+        // let token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2N2E3MjBmY2UzMmY1NWJjNzhmMmVmNjciLCJpYXQiOjE3NDAzOTE4MTEsImV4cCI6MTc0MDM5NTQxMX0.e-WzzQTahEVmp8StpI7IaEhR3ZivUWVCFSE0vjg4F5w"
+        
+        // let decoded  =   jwt.decode(token,process.env.secret_key)
+        // let userId = decoded.userId
+
+        // const order = await Order.find({userId,status:{$in:["Food Processing","Out for Delivery"]}})
+        
+        // let itemList = []
+
+        // const currentOrder =  order.forEach((order)=>{
+        //     itemList.push(order.items)
+        // })
+
+        // console.log(itemList);
+        
+
+        // const orders = await Order.find({});
+
+        // if (!orders || orders.length === 0) {
+        //     console.log("No orders found!");
+        // } else {
+        //     orders.forEach(order => {
+        //         console.log(order.items);
+        //     });
+        // }
+
+        
         
         let products = await Product.find()
         res.json({success:true,products:products})
@@ -242,6 +270,9 @@ if (order) {
 
         const razorpayOrder = await razorpayInstance.orders.create(options);
 
+        order.razorpayOrderId = razorpayOrder.id
+        await order.save()
+
         return res.json({ success: true, order, razorpayOrder });
     } catch (error) {
         console.error("Error in placeOrder:", error);
@@ -253,7 +284,7 @@ if (order) {
 
 const verifyPayment =  async (req, res) => {
     try {
-        console.log("verify");
+        console.log("verify",req.body);
     
     const { razorpay_order_id, razorpay_payment_id, razorpay_signature } =
       req.body;
@@ -265,8 +296,15 @@ const verifyPayment =  async (req, res) => {
       .digest("hex");
   
     if (generated_signature === razorpay_signature) {
+
+        const order = await Order.findOne({razorpayOrderId:razorpay_order_id})
+        order.payment = true    
+        await order.save() 
+
       res.json({ success: true, message: "Payment verified successfully" });
     } else {
+        console.log("falied");
+        
       res.json({ success: false, message: "Invalid signature" });
     }
     } catch (error) {
@@ -346,27 +384,91 @@ const myOrders = async (req,res)=>{
 
 const chatbot = async (req, res) => {
     try {
+
+        let token = req.body.t
+
+        let decoded = jwt.decode(token,process.env.secret_key)
+        let userId = decoded.userId
+
+        console.log("body",req.body);
+        
+        
       const { message } = req.body;
       console.log("Received Message:", message);
 
       const API_KEY = process.env.API_KEY
 
-      const customPrompt = `
-      You are a chatbot for a food delivery service called 'Tomato'. 
-      Your goal is to assist customers with ordering food, tracking deliveries, and answering menu-related questions. 
-      Keep responses friendly, helpful, and focused on food delivery.
       
-      User: ${message}`
-    ;
+      let customPrompt = `
+      You are a chatbot for a food delivery service called 'Tomato'.
+      Your goal is to assist customers with:
+      - Placing food orders
+      - Tracking deliveries
+      - Answering menu-related questions
+      - Providing personalized recommendations
+
+      users previous orders are given utilise that to recommend  
+
+      Keep responses friendly, short, helpful, and focused on food delivery.
+
+      User: ${message}
+      `;
+
+      //   about Order
+      if(message.toLowerCase().includes("order") || message.toLowerCase().includes("track")){
+        const order = await Order.find({userId,status:{$in:["Food Processing","Out for Delivery"]}})
+        let itemList = []
+        const currentOrder =  order.forEach((order)=>{
+            itemList.push(order.items)
+        })
+        console.log("itemsList - ",itemList);
+        
+
+
+        if(order){
+        customPrompt +=`if asked for order details use this 
+        ${order}
+            Order ID : ${order._id},
+            OrderItems : ${itemList},
+            status : ${order.status},
+            delivery time : 30 - 40 minutes
+
+        Respond with this information when asked about their current order.`
+        }else{
+            customPrompt += ` The user has no active orders.order ID to check for past orders.`;
+        }
+        
+    }
+
+      //past orders for personalized suggestions
+      if (message.toLowerCase().includes("what should i eat") || message.toLowerCase().includes("suggest")) {
+          const pastOrders = await Order.find({ userId }).limit(3);
+          if (pastOrders.length > 0) {
+              const orderedItems = pastOrders.flatMap(order => order.items);
+            //   console.log("orderedItems",orderedItems);
+              const uniqueItems = [...new Set(orderedItems)];
+              const menu = await Product.find()
+              customPrompt += ` The user has previously ordered: ${uniqueItems.join(", ")}. Suggest something similar or a popular new item.
+              use only food in this data to suggest ${menu}`;
+          } else {
+              customPrompt += ` The user hasn't ordered before. Suggest popular dishes.`;
+          }
+
+        
+          
+          
+      }
   
       const response = await axios.post(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${API_KEY}`,
+        `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${API_KEY}`
+
+
+,
         {
           contents: [{ role: "user", parts: [{ text: customPrompt }] }]
         }
       );
   
-      console.log("Full API Response:", JSON.stringify(response.data, null, 2));
   
       
       const replyParts = response.data.candidates?.[0]?.content?.parts;

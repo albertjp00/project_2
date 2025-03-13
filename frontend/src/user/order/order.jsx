@@ -158,6 +158,9 @@ const Order = () => {
             headers: { Authorization: `Bearer ${token}` } ,
             t : token
           });
+
+          const  order = response.data.order
+          
     
           if (!response.data.success) {
             toast.error("Failed to create order");
@@ -178,16 +181,21 @@ const Order = () => {
             handler: async function (response) {
               const verifyRes = await axios.post(
                 "http://localhost:2000/user/verifyPayment",
-                response
+                response,
+                order
               );
     
               if (verifyRes.data.success) {
                 // toast.success("Payment Successful!");
+                console.log("payment success");
+                
                 setTimeout(()=>{
                     navigate('/user/myOrders')
                 },1000)
                 
               } else {
+                console.log("failed");
+                
                 toast.error("Payment verification failed");
               }
             },

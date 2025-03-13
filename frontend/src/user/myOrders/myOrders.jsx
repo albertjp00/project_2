@@ -46,7 +46,7 @@ const MyOrders = () => {
         console.log("Listening for order updates...");
         
         socket.on("updatedStatus",(updatedOrder)=>{
-            console.log("Received update:", updatedOrder);
+            // console.log( updatedOrder);
             setData((prevData)=>
                 prevData.map((order)=>
                     order._id === updatedOrder._id ? updatedOrder : order

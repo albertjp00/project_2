@@ -17,6 +17,8 @@ const StoreContextProvider = (props)=>{
 
     const [token,setToken] = useState(localStorage.getItem('token') || "")
 
+    const [category,setCategory] = useState("All")
+
     
 
     const loadCartData =  async ()=>{
@@ -121,6 +123,8 @@ const StoreContextProvider = (props)=>{
         }
     }
 
+    
+
      useEffect(()=>{
         async function loadData(){
             await fetchFoodList()
@@ -169,12 +173,15 @@ const StoreContextProvider = (props)=>{
         foodList,
         cartItems,
         setFoodList,
+        fetchFoodList,
         setCartItems,
         addToCart,
         removeFromCart,
         token,
         setToken,
-        totalAmount
+        totalAmount,
+        category,
+        setCategory
     }
 
     return (

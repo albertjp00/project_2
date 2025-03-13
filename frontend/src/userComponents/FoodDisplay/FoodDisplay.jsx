@@ -3,11 +3,21 @@ import './foodDisplay.css'
 import FoodItem from '../FoodItem/FoodItem'
 import { StoreContext } from '../../context/storeContext'
 
-const FoodDisplay = ({category}) => {
+const FoodDisplay = () => {
 
-    const {foodList} = useContext(StoreContext)
+    const {foodList,category} = useContext(StoreContext)
 
     let foodLists = foodList.filter((item)=>item.status == 'listed')
+
+    // if(!category == "All"){
+    //   console.log(category);
+      
+    //   foodList = foodList.filter((item)=>item.category = category)
+    // }
+
+    if (category !== "All") {
+      foodLists = foodLists.filter((item) => item.category === category);
+    }
 
   return (
     <div className='food-display' id='food-display'>
