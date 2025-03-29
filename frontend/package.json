@@ -10,11 +10,14 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@react-oauth/google": "^0.12.1",
     "axios": "^1.7.9",
     "js-cookie": "^3.0.5",
+    "leaflet": "^1.9.4",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-fox-toast": "^1.10.11",
+    "react-leaflet": "^4.2.1",
     "react-router-dom": "^7.1.1",
     "react-toastify": "^11.0.2",
     "socket.io-client": "^4.8.1",

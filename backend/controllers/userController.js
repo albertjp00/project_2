@@ -53,6 +53,23 @@ const login = async (req,res) =>{
     }
 }
 
+
+
+const googleAuth = async (req,res)=>{
+    try {
+        const {token} = req.body
+        console.log("googleLOgin");
+        
+        console.log(token);
+        
+
+
+    } catch (error) {
+        console.log(error);
+        
+    }
+}
+
 // User register
 const register = async (req,res)=>{
     try {
@@ -486,6 +503,7 @@ const chatbot = async (req, res) => {
 module.exports = {
   
     login,
+    googleAuth,
     register,
     getProducts,
     cartAdd,

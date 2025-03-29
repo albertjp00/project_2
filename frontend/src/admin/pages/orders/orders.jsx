@@ -5,6 +5,9 @@ import axios from 'axios'
 import { toast } from 'react-toastify'
 import { assets } from '../../../assets/assets'
 
+import io from "socket.io-client";
+const socket = io("http://localhost:2000");
+
 const Orders = () => {
 
     const [orders,setOrders] = useState([])
@@ -42,9 +45,16 @@ const Orders = () => {
                     order._id === orderId ? { ...order, status: newStatus } : order
                 )
             );
+
+            
+
         } else {
             toast.error(response.data.message);
         }
+
+        
+
+
     } catch (error) {
         console.error("Error updating status:", error);
         toast.error("Failed to update order status");

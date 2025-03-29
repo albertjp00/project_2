@@ -27,14 +27,22 @@ const io = socketIo(server,{
     }
 })
 
+
+let deliveryLocation = { lat: 48.8566, lng: 2.3522 }; // Default location (Paris)
+
 io.on("connection",(socket)=>{
     console.log("New CLient Connected",socket.id);
 
+    
     socket.on("disconnect",()=>{
         console.log("Client disconnected",socket.io);
+
     })
     
 })
+
+
+
 
 app.set("socket.io",io)
 
@@ -59,9 +67,11 @@ mongoose.connect(process.env.MONGO_URL)
 
 
 app.use(cors({
-    origin: 'http://localhost:5173',
-    credentials : true
-}))
+    origin: ["http://localhost:5173"],  // Allow requests from your frontend
+    methods: ["GET", "POST", "PUT", "DELETE"],  // Allow necessary methods
+    allowedHeaders: ["Content-Type", "Authorization"],  // Allow headers needed for authentication
+    credentials: true  // Allow cookies and authentication tokens
+}));
 
 
 

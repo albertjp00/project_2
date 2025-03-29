@@ -4,6 +4,8 @@ import { Link, useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import { toast } from 'react-toastify'
 import { StoreContext } from '../../context/storeContext'
+import { GoogleOAuthProvider,GoogleLogin } from '@react-oauth/google'
+
 
 
 
@@ -17,6 +19,10 @@ const Login = () => {
     email:'',
     password:''
   })
+
+  // const client_id = import.meta.env.GOOGLE_CLIENT_ID
+  const client_id = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+  
 
   const validate = ()=>{
 
@@ -58,14 +64,51 @@ const Login = () => {
       toast.error(response.data.message,{autoClose:1500})
     }
     
-
-    
-
     } catch (error) {
+      toast.error("An error occured")
       console.log(error);
       
     }
+
+
+    
+
+
   }
+
+
+
+
+  const googleLogin = async (response) => {
+    console.log("Google Response:", response); // Debugging
+
+    if (!response || !response.credential) {
+        toast.error("Google Login Failed");
+        return;
+    }
+
+    try {
+
+      
+      
+        const res = await axios.post('http://localhost:2000/user/auth/google', {
+            token: response.credential
+        });
+
+        if (res.data.token) {
+            setToken(res.data.token);
+            localStorage.setItem("token", res.data.token);
+            toast.success("Login Successful", { autoClose: 1000 });
+            setTimeout(() => {
+                navigate('/user/home');
+            }, 1500);
+        }
+    } catch (error) {
+        console.log(error);
+        toast.error("Google authentication failed");
+    }
+}
+
 
   return (
     <div className="login">
@@ -93,6 +136,14 @@ const Login = () => {
             </form>
             <p>Dont have an account <Link to='/user/register'>Register</Link></p>
           
+
+            
+
+            <GoogleOAuthProvider clientId = {client_id}>
+                <GoogleLogin 
+                onSuccess={(response)=>googleLogin(response)} onError={() => toast.error("Google Login Failed")}
+                />
+            </GoogleOAuthProvider>
           </div>
         
     </div>

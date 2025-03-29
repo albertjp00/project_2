@@ -6,7 +6,9 @@ const cors = require('cors')
 
 const { register, login, getProducts, cartAdd, loadCart, 
     cartRemove, placeOrder, myOrders, 
-    verifyPayment, chatbot} = require('../controllers/userController')
+    verifyPayment, chatbot,
+    googleAuth} = require('../controllers/userController')
+
 
 
 user.use(
@@ -21,6 +23,8 @@ user.use(express.json())
 
 
 user.post('/login',login)
+
+user.post('/auth/google',googleAuth)
 
 user.post('/register',register)
 
