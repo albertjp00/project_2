@@ -64,7 +64,7 @@ const Cart = () => {
                     <p className='remove' onClick={()=>removeFromCart(item._id)}>X</p>
                   </div>
                   <hr />  
-                </div>          
+                </div>
               )
             }
         })}

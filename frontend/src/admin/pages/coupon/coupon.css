@@ -1,0 +1,46 @@
+.coupon-page{
+    display: flex;
+    justify-content:flex-start
+}
+
+.coupon{
+   
+    width: 40%;
+    margin-left: max(5vw,25px);
+    margin-top: 10px;
+    color: #6d6d6d;
+    font: 16px;
+}
+
+.forms{
+    gap: 20px;
+    
+}
+
+.coupon-name , .coupon-amount{
+    width: max(40px,280px);
+}
+
+.coupon-name input,.coupon-amount input{
+    padding: 10px;
+    margin-bottom: 20px;
+}
+
+
+.coupon button{
+    max-width: 120px;
+    border: none;
+    padding: 10px;
+    background-color: black;
+    color: white;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+
+.show-coupon{
+    
+    display: grid;
+    grid-template-columns: 3fr 1.5fr 1fr;
+    
+}

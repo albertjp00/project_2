@@ -20,6 +20,12 @@ const razorpayInstance = new razorpay({
 
 const crypto = require('crypto')
 
+const {OAuth2Client} = require('google-auth-library')
+
+const client = new OAuth2Client(process.env.VITE_GOOGLE_CLIENT_ID)
+
+
+
 
 // User Login
 const login = async (req,res) =>{
@@ -55,20 +61,50 @@ const login = async (req,res) =>{
 
 
 
-const googleAuth = async (req,res)=>{
+const googleAuth = async (req, res) => {
     try {
-        const {token} = req.body
-        console.log("googleLOgin");
-        
-        console.log(token);
+        const { token } = req.body;
         
 
+        const ticket = await client.verifyIdToken({
+            idToken: token,
+            audience: process.env.VITE_GOOGLE_CLIENT_ID,
+        });
 
+        const payload = ticket.getPayload();
+        console.log("userInfo", payload);
+
+        const { name, email, sub: googleId } = payload; // `sub` is Google user ID
+
+        if (!email) {
+            return res.status(400).json({ error: "Email is missing from Google response" });
+        }
+
+        let user = await User.findOne({ email });
+
+        if (!user) {
+            user = await User.create({
+                name,
+                email,
+                googleId: googleId || undefined // ✅ Prevents inserting `null`
+            });
+        } else if (!user.googleId && googleId) {
+            
+            user.googleId = googleId;
+            await user.save();
+        }
+
+        
+        const jwtToken = jwt.sign({userId:user._id},process.env.secret_key,{expiresIn:"1h"})
+
+        res.json({ message: "Google login successful",jwtToken:jwtToken  });
     } catch (error) {
-        console.log(error);
-        
+        console.error(error);
+        res.status(500).json({ error: "Google authentication failed" });
     }
-}
+};
+
+
 
 // User register
 const register = async (req,res)=>{
@@ -384,12 +420,16 @@ const payonline = async (res,req)=>{
 }
 
 const myOrders = async (req,res)=>{
-
+    console.log("getting oprdersss");
+    
     let token = req.query.t
-
+    console.log(token);
+    
     let decoded = jwt.decode(token,process.env.secret_key)
     let userId =  decoded.userId
+    console.log("userIDfff ",userId);
     
+
     
     let orders = await Order.find({userId})
     
@@ -498,6 +538,15 @@ const chatbot = async (req, res) => {
     }
   };
   
+
+  const getCoupon = async (req,res)=>{
+    try {
+        
+    } catch (error) {
+        console.log(error);
+        
+    }
+  }
 
 
 module.exports = {

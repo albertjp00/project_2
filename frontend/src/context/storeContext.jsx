@@ -19,6 +19,8 @@ const StoreContextProvider = (props)=>{
 
     const [category,setCategory] = useState("All")
 
+    const [coupons,setCoupon] = useState({})
+
     
 
     const loadCartData =  async ()=>{
@@ -125,15 +127,7 @@ const StoreContextProvider = (props)=>{
 
     
 
-     useEffect(()=>{
-        async function loadData(){
-            await fetchFoodList()
-            await loadCartData()
-        }
-
-        loadData()
-        
-    },[])
+     
 
     const totalAmount = useMemo(() => {
         let total = 0;
@@ -155,6 +149,28 @@ const StoreContextProvider = (props)=>{
     }, [cartItems, foodList]);
 
     
+    const getCoupons = async ()=>{
+        try {
+            const response = await axios.get('http://localhost:2000/user/getCoupon')
+        if(response.data.coupon){
+            setCoupon(response.data.coupon)
+        }
+        } catch (error) {
+            console.log(error);
+            
+        }
+    }
+
+    useEffect(()=>{
+        async function loadData(){
+            await fetchFoodList()
+            await loadCartData()
+            await getCoupons()
+        }
+
+        loadData()
+        
+    },[])
 
    
 
@@ -181,7 +197,9 @@ const StoreContextProvider = (props)=>{
         setToken,
         totalAmount,
         category,
-        setCategory
+        setCategory,
+        coupon,
+        setCoupon
     }
 
     return (

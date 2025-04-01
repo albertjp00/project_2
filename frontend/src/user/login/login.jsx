@@ -80,7 +80,7 @@ const Login = () => {
 
 
   const googleLogin = async (response) => {
-    console.log("Google Response:", response); // Debugging
+    console.log("Google Response:", response.credential); 
 
     if (!response || !response.credential) {
         toast.error("Google Login Failed");
@@ -95,9 +95,13 @@ const Login = () => {
             token: response.credential
         });
 
-        if (res.data.token) {
-            setToken(res.data.token);
-            localStorage.setItem("token", res.data.token);
+        console.log(res);
+        
+        if (res.data.jwtToken) {
+          console.log("here");
+          
+            setToken(res.data.jwtToken);
+            localStorage.setItem("token", res.data.jwtToken);
             toast.success("Login Successful", { autoClose: 1000 });
             setTimeout(() => {
                 navigate('/user/home');

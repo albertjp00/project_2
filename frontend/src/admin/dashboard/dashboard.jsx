@@ -7,6 +7,7 @@ import { Route, Routes } from 'react-router-dom'
 import List from '../pages/list/list'
 import Edit from '../pages/edit/edit'
 import Orders from '../pages/orders/orders'
+import Coupon from '../pages/coupon/coupon'
 
 
 const Dashboard = () => {
@@ -21,6 +22,7 @@ const Dashboard = () => {
             <Route path="list" element={<List />} />
             <Route path='edit/:id' element={<Edit />} />
             <Route path='orders' element={<Orders />}/>
+            <Route path='coupon' element={<Coupon />}/>
           </Routes>
         </div>
       </div>
