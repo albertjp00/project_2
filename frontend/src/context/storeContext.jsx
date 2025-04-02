@@ -165,7 +165,7 @@ const StoreContextProvider = (props)=>{
         async function loadData(){
             await fetchFoodList()
             await loadCartData()
-            await getCoupons()
+            // await getCoupons()
         }
 
         loadData()
@@ -198,7 +198,7 @@ const StoreContextProvider = (props)=>{
         totalAmount,
         category,
         setCategory,
-        coupon,
+        coupons,
         setCoupon
     }
 

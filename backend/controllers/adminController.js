@@ -1,6 +1,6 @@
 const  Product = require("../models/product");
 const Order = require('../models/order');
-
+const Coupon = require('../models/coupon')
 
 
 
@@ -144,6 +144,28 @@ const updateStatus = async (req,res)=>{
     }
 }
 
+
+const addCoupon = async (req,res)=>{
+    try {
+        const {name,amount} = req.body
+
+        let coupon = await Coupon.findOne({name,amount})
+
+        if(!coupon){
+            await Coupon.create({name,amount})
+            res.json({success:true,message:"Coupon Created"})
+        }else{
+            res.json({success:false,message:"Coupon Exists"})
+        }
+
+    console.log(req.body);
+    } catch (error) {
+        console.log(error);
+        
+    }
+    
+}
+
 module.exports ={
     addProduct,
     getList,
@@ -152,5 +174,6 @@ module.exports ={
     editItem,
     getEdit,
     listOrders,
-    updateStatus
+    updateStatus,
+    addCoupon
 }

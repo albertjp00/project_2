@@ -1,11 +1,14 @@
 const User = require('../models/user')
 const Product = require('../models/product')
 const Cart = require('../models/cart')
+const Order = require('../models/order')
+const Coupon = require('../models/coupon')
+
 
 const bcrypt = require('bcrypt')
 
 const jwt = require('jsonwebtoken')
-const Order = require('../models/order')
+
 require('dotenv').config()
 
 const axios = require('axios')
@@ -541,6 +544,10 @@ const chatbot = async (req, res) => {
 
   const getCoupon = async (req,res)=>{
     try {
+        let coupon = await Coupon.find({})
+        console.log(coupon);
+
+        res.json({coupon:coupon})
         
     } catch (error) {
         console.log(error);
@@ -561,7 +568,8 @@ module.exports = {
     placeOrder,
     verifyPayment,
     myOrders,
-    chatbot
+    chatbot,
+    getCoupon
 }
 
 
