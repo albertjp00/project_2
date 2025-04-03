@@ -149,7 +149,7 @@ const addCoupon = async (req,res)=>{
     try {
         const {name,amount} = req.body
 
-        let coupon = await Coupon.findOne({name,amount})
+        let coupon = await Coupon.findOne({name})
 
         if(!coupon){
             await Coupon.create({name,amount})
@@ -166,6 +166,20 @@ const addCoupon = async (req,res)=>{
     
 }
 
+
+const getCoupon = async (req,res)=>{
+    try {
+        let coupon = await Coupon.find({})
+        
+
+        res.json({coupon:coupon})
+        
+    } catch (error) {
+        console.log(error);
+        
+    }
+  }
+
 module.exports ={
     addProduct,
     getList,
@@ -175,5 +189,6 @@ module.exports ={
     getEdit,
     listOrders,
     updateStatus,
-    addCoupon
+    addCoupon,
+    getCoupon
 }

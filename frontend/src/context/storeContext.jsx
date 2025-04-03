@@ -19,7 +19,7 @@ const StoreContextProvider = (props)=>{
 
     const [category,setCategory] = useState("All")
 
-    const [coupons,setCoupon] = useState({})
+    const [coupons,setCoupon] = useState([])
 
     
 
@@ -151,9 +151,12 @@ const StoreContextProvider = (props)=>{
     
     const getCoupons = async ()=>{
         try {
-            const response = await axios.get('http://localhost:2000/user/getCoupon')
+            const response = await axios.get('http://localhost:2000/admin/getCoupon')
         if(response.data.coupon){
+            // console.log(response.data.coupon);
+            
             setCoupon(response.data.coupon)
+            
         }
         } catch (error) {
             console.log(error);
@@ -165,7 +168,7 @@ const StoreContextProvider = (props)=>{
         async function loadData(){
             await fetchFoodList()
             await loadCartData()
-            // await getCoupons()
+            await getCoupons()
         }
 
         loadData()

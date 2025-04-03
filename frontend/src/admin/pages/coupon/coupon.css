@@ -39,8 +39,34 @@
 
 
 .show-coupon{
+    width: 100%;
+    max-width: 450px;
+    margin: 20px auto;
+}
+
+.coupon-header{
     
     display: grid;
-    grid-template-columns: 3fr 1.5fr 1fr;
+    grid-template-columns: 1fr 1.5fr 1fr;
+    align-items: center;
+
+}
+
+.coupon-header p{
+    color: tomato;
+}
+
+.coupon-data{
+    display: grid;
+    grid-template-columns: 1fr 1.5fr 1fr;
+    align-items: center;
+}
+
+.coupon-data button{
+    color: black;
+    border: 0;
+    border-radius: 6px;
+    align-items: center;
     
 }
+

@@ -1,13 +1,18 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import './coupon.css'
 import { toast } from 'react-toastify'
 import axios from 'axios'
+import  { StoreContext } from '../../../context/storeContext'
 
 const Coupon = () => {
     const [coupon,setCoupon] = useState({
         name:"",
         amount :""
     })
+
+    const {coupons  } = useContext(StoreContext)
+    console.log(coupons);
+    
 
     const onChangeHandler = (e)=>{
         const name = e.target.name
@@ -70,6 +75,15 @@ const Coupon = () => {
             console.error("Error:", error);
         }
     };
+
+
+    const deleteCoupon = async (name,amount)=>{
+
+        console.log(name,amount);
+        
+        // let response = await axios.post('http://localhost:2000/admin/DeleteCoupon')
+
+    }
     
 
   return (
@@ -91,12 +105,25 @@ const Coupon = () => {
         </form>
     </div>
     <div className="show-coupon">
-        <p>Coupon Name</p>
-        <p>Coupon amount</p>
+        <div className="coupon-header">
+            <p>Coupon Name</p>
+            <p>Coupon amount</p>
+            <p>Action</p>
+        </div>
         <br />
-        
-
-        
+        <hr />
+        {coupons.map((coupon,index)=>{
+            return(
+                <div key={index} className="coupon-data">
+                        <p>{coupon.name}</p>
+                        <p>{coupon.amount}</p>
+                        <button onClick={()=>deleteCoupon(coupon._id)}>Delete</button>
+                    
+                </div>
+                
+            
+            )
+        })}
     </div>
 
     </div>

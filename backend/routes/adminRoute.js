@@ -9,8 +9,8 @@ const cors = require('cors')
 const { addProduct, getList,  unlist, 
     listItem, editItem, getEdit, listOrders, 
     updateStatus,
-    addCoupon} = require('../controllers/adminController')
-const { getCoupon } = require('../controllers/userController')
+    addCoupon,
+    getCoupon} = require('../controllers/adminController')
 
 
 admin.use(express.json())
@@ -55,5 +55,7 @@ admin.post('/updateStatus',updateStatus)
 admin.get('/getCoupon',getCoupon)
 
 admin.post('/addCoupon',addCoupon)
+
+admin.get('/getCoupon',getCoupon)
 
 module.exports = admin
