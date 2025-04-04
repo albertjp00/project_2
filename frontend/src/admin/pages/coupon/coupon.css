@@ -8,7 +8,7 @@
     width: 40%;
     margin-left: max(5vw,25px);
     margin-top: 10px;
-    color: #6d6d6d;
+    color: tomato;
     font: 16px;
 }
 
@@ -38,35 +38,42 @@
 }
 
 
-.show-coupon{
+.show-coupon {
     width: 100%;
-    max-width: 450px;
-    margin: 20px auto;
+    max-width: 600px;
+    margin: auto;
 }
 
-.coupon-header{
-    
+.coupon-header,
+.coupon-data {
     display: grid;
-    grid-template-columns: 1fr 1.5fr 1fr;
+    grid-template-columns: 2fr 1fr 1fr; 
+    gap: 10px;
     align-items: center;
-
+    padding: 10px;
 }
 
-.coupon-header p{
-    color: tomato;
+.coupon-header {
+    font-weight: bold;
+    background-color: #f3f3f3;
+    border-bottom: 2px solid #ccc;
 }
 
-.coupon-data{
-    display: grid;
-    grid-template-columns: 1fr 1.5fr 1fr;
-    align-items: center;
+.coupon-data {
+    border-bottom: 1px solid #ddd;
 }
 
-.coupon-data button{
-    color: black;
-    border: 0;
-    border-radius: 6px;
-    align-items: center;
-    
+button {
+    background-color: tomato;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    border-radius: 5px;
 }
+
+button:hover {
+    background-color: tomato;
+}
+
 

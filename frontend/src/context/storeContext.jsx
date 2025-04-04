@@ -19,7 +19,13 @@ const StoreContextProvider = (props)=>{
 
     const [category,setCategory] = useState("All")
 
-    const [coupons,setCoupon] = useState([])
+    const [coupons,setCoupons] = useState([])
+
+    const [couponApplied,setCouponApplied] = useState(null)
+
+    const [cartAmount,setCartAmount] = useState(0)
+
+    const [subtotal,setSubtotal] = useState(0)
 
     
 
@@ -129,7 +135,7 @@ const StoreContextProvider = (props)=>{
 
      
 
-    const totalAmount = useMemo(() => {
+    let totalAmount = useMemo(() => {
         let total = 0;
         // console.log("total amount");
         
@@ -145,6 +151,7 @@ const StoreContextProvider = (props)=>{
                 }
             }
         }
+        setCartAmount(total)
         return total;
     }, [cartItems, foodList]);
 
@@ -155,7 +162,7 @@ const StoreContextProvider = (props)=>{
         if(response.data.coupon){
             // console.log(response.data.coupon);
             
-            setCoupon(response.data.coupon)
+            setCoupons(response.data.coupon)
             
         }
         } catch (error) {
@@ -182,6 +189,10 @@ const StoreContextProvider = (props)=>{
         const storedToken = localStorage.getItem("token")
         if(storedToken){
             setToken(storedToken)
+            // setTimeout(()=>{
+            //     localStorage.removeItem('token')
+            //     setToken("")
+            // },100000)
         }
         
     }, [cartItems, foodList, totalAmount]);
@@ -199,10 +210,16 @@ const StoreContextProvider = (props)=>{
         token,
         setToken,
         totalAmount,
+        cartAmount,
+        setCartAmount,
+        subtotal,
+        setSubtotal,
         category,
         setCategory,
         coupons,
-        setCoupon
+        setCoupons,
+        couponApplied,
+        setCouponApplied
     }
 
     return (

@@ -19,7 +19,12 @@ const userSchema=new mongoose.Schema({
         unique : true,
         sparse: true,
         default:"nill"
-    }
+    },
+    coupon:[{
+        code:{
+            type:String
+        }
+    }]
             
 })
 

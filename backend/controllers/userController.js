@@ -251,8 +251,8 @@ const cartRemove = async (req,res)=>{
 
         if(quantity === 0){
             let cart = await Cart.deleteOne({userId:userId,productId:id})
-            
-            
+
+
             
         }else{
             let cart = await Cart.findOne({userId:userId,productId:id})
@@ -287,15 +287,15 @@ const placeOrder = async (req, res) => {
         console.log("Received Order Data:", orderData);
 
         
-        let order = await Order.findOne({ userId: userId, status: "Food Processing" });
+//         let order = await Order.findOne({ userId: userId, status: "Food Processing" });
 
-if (order) {
-    order.items = orderData.items;
-    order.amount = orderData.amount;
-    order.address = orderData.address;
-    await order.save();
-} else {
-    order = new Order({
+// if (order) {
+//     order.items = orderData.items;
+//     order.amount = orderData.amount;
+//     order.address = orderData.address;
+//     await order.save();
+// } else {
+    let order = new Order({
         userId: userId,
         items: orderData.items,
         amount: orderData.amount,
@@ -303,7 +303,7 @@ if (order) {
     });
 
     await order.save();
-}
+
 
         // Deleteing Cart
         await Cart.findOneAndDelete({ userId: userId });
@@ -402,7 +402,7 @@ const payonline = async (res,req)=>{
     }
     await order.save()
 
-    let cartDelete = await Cart.findOneAndDelete({userId:userId})
+    let cartDelete = await Cart.deleteMany({userId:userId})
     
     console.log(order);
 
@@ -440,6 +440,8 @@ const myOrders = async (req,res)=>{
     // console.log(order);
     res.json({success:true,orders:orders})
 }
+
+
 
 
 const chatbot = async (req, res) => {

@@ -4,11 +4,13 @@ import Navbar from '../../userComponents/navbar/navbar'
 import { StoreContext } from '../../context/storeContext'
 import axios from 'axios'
 import { toast } from 'react-toastify'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 
 const Order = () => {
 
-    const {totalAmount,foodList,cartItems,setCartItems,token} = useContext(StoreContext)
+    const {totalAmount,foodList,cartItems,setCartItems,token,
+      subtotal,setSubtotal
+    } = useContext(StoreContext)
 
     const [data,setData] = useState({
         firstName:"",
@@ -24,6 +26,8 @@ const Order = () => {
 
     const navigate = useNavigate()
 
+    const location = useLocation(0)
+    const {amount} = location.state 
     
 
     const validate = ()=>{
@@ -109,7 +113,7 @@ const Order = () => {
         let orderData = {
             address:data,
             items:orderItems,
-            amount : totalAmount + 2
+            amount : subtotal + 2
         }
 
         let response = await axios.post('http://localhost:2000/user/placeOrder',
@@ -147,14 +151,14 @@ const Order = () => {
           let orderData = {
             address:data,
             items:orderItems,
-            amount : totalAmount + 2
+            amount : subtotal + 2
         }
 
 
           
           const response = await axios.post("http://localhost:2000/user/placeOrder", {
             orderData,
-            amount: totalAmount,
+            amount: subtotal,
             headers: { Authorization: `Bearer ${token}` } ,
             t : token
           });
@@ -168,7 +172,8 @@ const Order = () => {
           }
 
           
-          const razorpayKey = import.meta.env.RAZORPAY_KEY;
+          const razorpayKey = import.meta.env.VITE_RAZORPAY_KEY;
+          
 
         //   Configuring  Razorpay
           const options = {
@@ -225,10 +230,8 @@ const Order = () => {
             navigate('/user/login')
         }
         
-
-        if(Object.keys(cartItems).length === 0){
-            navigate("/user/home")
-        }
+        setSubtotal(amount)
+        
 
         
     },[cartItems])
@@ -276,7 +279,7 @@ const Order = () => {
           <div>
             <div className="cart-total-details">
               <p>Subtototal</p>
-              <p>{totalAmount}</p>
+              <p>{subtotal}</p>
             </div>
             <hr />
             <div className="cart-total-details">
@@ -286,7 +289,7 @@ const Order = () => {
             <hr />
             <div className="cart-total-details">
               <p>Total</p>
-              <b>{totalAmount+2}</b>
+              <b>{subtotal+2}</b>
             </div>
             
           </div>

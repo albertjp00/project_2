@@ -152,8 +152,8 @@ const addCoupon = async (req,res)=>{
         let coupon = await Coupon.findOne({name})
 
         if(!coupon){
-            await Coupon.create({name,amount})
-            res.json({success:true,message:"Coupon Created"})
+            let newCoupon = await Coupon.create({name,amount})
+            res.json({success:true,message:"Coupon Created",coupon:newCoupon})
         }else{
             res.json({success:false,message:"Coupon Exists"})
         }
@@ -180,6 +180,20 @@ const getCoupon = async (req,res)=>{
     }
   }
 
+  const deleteCoupon = async (req,res)=>{
+    try {
+        let {id} = req.body
+
+    const coupon = await Coupon.findByIdAndDelete(id)
+    if(coupon){
+        res.json({success:true,message:"Coupon Deleted"})
+    }
+    } catch (error) {
+        console.log(error);
+        
+    }
+  }
+
 module.exports ={
     addProduct,
     getList,
@@ -190,5 +204,6 @@ module.exports ={
     listOrders,
     updateStatus,
     addCoupon,
-    getCoupon
+    getCoupon,
+    deleteCoupon
 }

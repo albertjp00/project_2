@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import './cart.css'
 import { StoreContext } from '../../context/storeContext'
 import Navbar from '../../userComponents/navbar/navbar'
@@ -8,9 +8,19 @@ import Footer from '../../userComponents/footer/footer'
 
 const Cart = () => {
 
-  const {cartItems,foodList,removeFromCart,getTotalAmount,totalAmount,token} = useContext(StoreContext)
+  const {cartItems,foodList,removeFromCart,
+    getTotalAmount,totalAmount,
+    token,
+    coupons,setCoupons,getCoupons,couponApplied,setCouponApplied,
+
+    cartAmount,setCartAmount
+
+    
+
+  } = useContext(StoreContext)
 
   
+
   const navigate = useNavigate()
   
 
@@ -21,15 +31,59 @@ const Cart = () => {
     if(totalAmount === 0){
       toast.error("Add Items")
     }else{
-      navigate('/user/order')
+      navigate('/user/order',{state:{amount:cartAmount}})
     }
   }
+
+  const [selectedCoupon, setSelectedCoupon] = useState("");
+
+const applyCoupon = (couponId) => {
+    setSelectedCoupon(couponId);
+    console.log(couponId);
+    
+};
+
+const handleApplyCoupon = () => {
+  if (selectedCoupon === "") {
+    toast.error("Please select a coupon", { autoClose: 1500 });
+    return;
+  }
+
+  if(!couponApplied){
+    setCouponApplied(true)
+    const coupon = coupons.find(coupon => selectedCoupon === coupon._id);
+  if (!coupon) return;
+
+  const discount = parseInt(coupon.amount);
+  const updatedAmount = totalAmount - discount;
+
+  setCartAmount(updatedAmount); 
+  setCouponApplied(coupon)
+  toast.success("Coupon applied successfully!", { autoClose: 1500 });
+  }else{
+    
+  }
+
+};
+
+
+   
+const removeCoupon = () => {
+  setCouponApplied(false);
+  setSelectedCoupon("");
+  setCartAmount(totalAmount); // Reset to full amount
+  toast.info("Coupon removed", { autoClose: 1500 });
+};
+
+
+
 
 
   useEffect(()=>{
     if(!token){
       navigate('/user/login')
     }
+    getCoupons
   },[token])
   
   
@@ -86,24 +140,54 @@ const Cart = () => {
               <p>{totalAmount===0?0:2}</p>
             </div>
             <hr />
+
+            {couponApplied && (
+              <>
+                <div className="cart-total-details">
+                  <p>Coupon Applied</p>
+                  <p onClick={removeCoupon}>Remove</p>
+                </div>
+                <hr />
+              </>
+            )}
+
+
             <div className="cart-total-details">
               <p>Total</p>
-              <b>{totalAmount===0?0:totalAmount+2}</b>
+              <b>{cartAmount===0?0:cartAmount+2}</b>
             </div>
             
           </div>
-          <button onClick={()=>toPlaceOrder()}>Proceed to Checkout</button>
+          <button  onClick={()=>toPlaceOrder()}>Proceed to Checkout</button>
         
         </div>
         <div className="cart-promocode">
-          <div>
-            <p>If you have promo code enter it here</p>
-            <div className="cart-promocode-input">
-              <input type="text" placeholder='promo code' />
-              <button>submit</button>
-            </div>
-          </div>
+        {!couponApplied && totalAmount>0 && (
+              <>
+                <div>
+        <p>select one promo code :</p>
+        <div className="cart-promocode-boxes">
+            {coupons.map((coupon) => (
+                <div 
+                    key={coupon._id} 
+                    className={`coupon-box ${selectedCoupon === coupon._id ? "selected" : " "}`} 
+                    onClick={() => applyCoupon(coupon._id)}
+                >
+                    <p>{coupon.name}</p>
+                    <p>{coupon.amount} Off</p>
+                    <br />
+
+                </div>
+            ))}
         </div>
+        <button onClick={handleApplyCoupon}>Apply Coupon</button>
+    </div> 
+              </>
+            )}
+     
+</div>
+
+
       </div>
       
     </div>

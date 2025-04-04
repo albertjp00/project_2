@@ -10,7 +10,8 @@ const { addProduct, getList,  unlist,
     listItem, editItem, getEdit, listOrders, 
     updateStatus,
     addCoupon,
-    getCoupon} = require('../controllers/adminController')
+    getCoupon,
+    deleteCoupon} = require('../controllers/adminController')
 
 
 admin.use(express.json())
@@ -57,5 +58,7 @@ admin.get('/getCoupon',getCoupon)
 admin.post('/addCoupon',addCoupon)
 
 admin.get('/getCoupon',getCoupon)
+
+admin.post('/deleteCoupon',deleteCoupon)
 
 module.exports = admin

@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import './coupon.css'
 import { toast } from 'react-toastify'
 import axios from 'axios'
@@ -10,8 +10,7 @@ const Coupon = () => {
         amount :""
     })
 
-    const {coupons  } = useContext(StoreContext)
-    console.log(coupons);
+    const {coupons,setCoupons  } = useContext(StoreContext)
     
 
     const onChangeHandler = (e)=>{
@@ -67,6 +66,9 @@ const Coupon = () => {
                     name: "", 
                     amount: "" 
                 });
+                // console.log(response.data.coupon);
+                
+                setCoupons((coupons)=>[...coupons,response.data.coupon])
             }else{
                 toast.error(response.data.message,{autoClose:1500})
             }
@@ -77,11 +79,19 @@ const Coupon = () => {
     };
 
 
-    const deleteCoupon = async (name,amount)=>{
+    const deleteCoupon = async (id)=>{
 
-        console.log(name,amount);
         
-        // let response = await axios.post('http://localhost:2000/admin/DeleteCoupon')
+        let response = await axios.post('http://localhost:2000/admin/DeleteCoupon',{
+            id:id
+        })
+
+        if(response.data.success){
+            setCoupons(coupons.filter((coupon)=>coupon._id !== id))
+            
+            toast.success("Coupon Removed")
+
+        }
 
     }
     
