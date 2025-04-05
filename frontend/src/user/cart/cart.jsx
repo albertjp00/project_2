@@ -5,10 +5,11 @@ import Navbar from '../../userComponents/navbar/navbar'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import Footer from '../../userComponents/footer/footer'
+import axios from 'axios'
 
 const Cart = () => {
 
-  const {cartItems,foodList,removeFromCart,
+  const {cartItems,foodList,addToCart,removeFromCart,
     getTotalAmount,totalAmount,
     token,
     coupons,setCoupons,getCoupons,couponApplied,setCouponApplied,
@@ -43,7 +44,7 @@ const applyCoupon = (couponId) => {
     
 };
 
-const handleApplyCoupon = () => {
+const handleApplyCoupon = async () => {
   if (selectedCoupon === "") {
     toast.error("Please select a coupon", { autoClose: 1500 });
     return;
@@ -51,8 +52,17 @@ const handleApplyCoupon = () => {
 
   if(!couponApplied){
     setCouponApplied(true)
+
+    
+
     const coupon = coupons.find(coupon => selectedCoupon === coupon._id);
   if (!coupon) return;
+
+  let response = await axios.post('http://localhost:2000/user/applyCoupon',{
+    couponId:coupon._id
+  })
+
+  
 
   const discount = parseInt(coupon.amount);
   const updatedAmount = totalAmount - discount;
@@ -113,8 +123,13 @@ const removeCoupon = () => {
                     <img className="cart-item-image" src={`http://localhost:2000/user/image/${item.image}`} alt="" />
                     <p>{item.name}</p>
                     <p>{item.price}</p>
-                    <p>{cartItems[item._id]}</p>
-                    <p>{item.price*cartItems[item._id]}</p>
+                    <div className="quantity-control">
+                      <button onClick={() => removeFromCart(item._id)}>-</button>
+                      <span>{cartItems[item._id]}</span>
+                      <button onClick={() => addToCart(item._id)}>+</button>
+                    </div>
+
+                    <p>{item.price*cartItems[item._id]} </p>
                     <p className='remove' onClick={()=>removeFromCart(item._id)}>X</p>
                   </div>
                   <hr />  
@@ -162,10 +177,10 @@ const removeCoupon = () => {
         
         </div>
         <div className="cart-promocode">
-        {!couponApplied && totalAmount>0 && (
+        {!couponApplied && totalAmount>40 && (
               <>
                 <div>
-        <p>select one promo code :</p>
+        <p>Apply Coupon :</p>
         <div className="cart-promocode-boxes">
             {coupons.map((coupon) => (
                 <div 

@@ -545,6 +545,18 @@ const chatbot = async (req, res) => {
   
 
 
+  const applyCoupon = async (req,res)=>{
+    try {
+        let {couponId} = req.body
+
+        let coupon = await Coupon.findById(couponId)
+        console.log("coupon",coupon);
+        
+    } catch (error) {
+        console.log(error);
+        
+    }
+  }
 
 
 module.exports = {
@@ -560,6 +572,7 @@ module.exports = {
     verifyPayment,
     myOrders,
     chatbot,
+    applyCoupon,
     
 }
 

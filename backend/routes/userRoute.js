@@ -7,7 +7,8 @@ const cors = require('cors')
 const { register, login, getProducts, cartAdd, loadCart, 
     cartRemove, placeOrder, myOrders, 
     verifyPayment, chatbot,
-    googleAuth} = require('../controllers/userController')
+    googleAuth,
+    applyCoupon} = require('../controllers/userController')
 
 
 
@@ -43,5 +44,7 @@ user.post('/verifyPayment',verifyPayment)
 user.get('/myOrders',myOrders)
 
 user.post('/chatbot',chatbot)
+
+user.post('/applyCoupon',applyCoupon)
 
 module.exports = user

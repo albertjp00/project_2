@@ -66,6 +66,10 @@
     width: 40px;
 }
 
+.navbar-right button{
+    color: black;
+}
+
 
 @media(max-width:1050px){
     .navbar-logo{
@@ -115,6 +119,7 @@
     .navbar-right button{
         padding: 7px 20px;
         font-size: 15px;
+        
     }
 
   }
