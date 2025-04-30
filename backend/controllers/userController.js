@@ -64,83 +64,95 @@ const login = async (req,res) =>{
 
 
 
-const googleAuth = async (req, res) => {
-    try {
-        const { token } = req.body;
+// const googleAuth = async (req, res) => {
+//     try {
+//         const { token } = req.body;
         
 
-        const ticket = await client.verifyIdToken({
-            idToken: token,
-            audience: process.env.VITE_GOOGLE_CLIENT_ID,
-        });
+//         const ticket = await client.verifyIdToken({
+//             idToken: token,
+//             audience: process.env.VITE_GOOGLE_CLIENT_ID,
+//         });
 
-        const payload = ticket.getPayload();
-        console.log("userInfo", payload);
+//         const payload = ticket.getPayload();
+//         console.log("userInfo", payload);
 
-        const { name, email, sub: googleId } = payload; // `sub` is Google user ID
+//         const { name, email, sub: googleId } = payload; // `sub` is Google user ID
 
-        if (!email) {
-            return res.status(400).json({ error: "Email is missing from Google response" });
-        }
+//         if (!email) {
+//             return res.status(400).json({ error: "Email is missing from Google response" });
+//         }
 
-        let user = await User.findOne({ email });
+//         let user = await User.findOne({ email });
 
-        if (!user) {
-            user = await User.create({
-                name,
-                email,
-                googleId: googleId || undefined // ✅ Prevents inserting `null`
-            });
-        } else if (!user.googleId && googleId) {
+//         if (!user) {
+//             user = await User.create({
+//                 name,
+//                 email,
+//                 googleId: googleId || undefined // ✅ Prevents inserting `null`
+//             });
+//         } else if (!user.googleId && googleId) {
             
-            user.googleId = googleId;
-            await user.save();
-        }
+//             user.googleId = googleId;
+//             await user.save();
+//         }
 
         
-        const jwtToken = jwt.sign({userId:user._id},process.env.secret_key,{expiresIn:"1h"})
+//         const jwtToken = jwt.sign({userId:user._id},process.env.secret_key,{expiresIn:"1h"})
 
-        res.json({ message: "Google login successful",jwtToken:jwtToken  });
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: "Google authentication failed" });
-    }
-};
+//         res.json({ message: "Google login successful",jwtToken:jwtToken  });
+//     } catch (error) {
+//         console.error(error);
+//         res.status(500).json({ error: "Google authentication failed" });
+//     }
+// };
 
 
 
 // User register
-const register = async (req,res)=>{
+const register = async (req, res) => {
     try {
-        console.log(req.body);
-        
-        const {name,email,password} = req.body
-
-        const existingUser = await User.findOne({email:email})
-        console.log(existingUser);
-        
-
-        if(existingUser){
-            console.log("user exists");
-
-            res.json({success:false,message:'User already exists'})
-        }
-
-        const hash = 10
-        const hashedPassword = await bcrypt.hash(password,hash)
-        const user = new User({name,email,password:hashedPassword})
-        await user.save()
-
-        return res.json({success:true,message:"Registration Succesfull"})
-
-
-
+      console.log(req.body);
+  
+      const { name, email, password } = req.body;
+  
+      // Check if user already exists
+      const existingUser = await User.findOne({ email });
+      if (existingUser) {
+        console.log("User exists");
+        return res.json({ success: false, message: 'User already exists' });
+      }
+  
+      console.log("User registration");
+  
+      // Hash the password
+      const hashRounds = 10;
+      const hashedPassword = await bcrypt.hash(password, hashRounds);
+  
+      // Create user object
+      const userData = {
+        name,
+        email,
+        password: hashedPassword
+      };
+  
+      // Only set googleId if provided
+      if (req.body.googleId) {
+        userData.googleId = req.body.googleId;
+      }
+  
+      // Save new user
+      const user = new User(userData);
+      await user.save();
+  
+      console.log(user);
+      return res.json({ success: true, message: "Registration Successful" });
+  
     } catch (error) {
-        console.log(error);
-        
+      console.log("Error during registration:", error);
+      return res.status(500).json({ success: false, message: "Server error" });
     }
-    
-}
+  };
 
 const getProducts  = async (req,res)=>{
     try {
@@ -268,6 +280,77 @@ const cartRemove = async (req,res)=>{
     }
 }
 
+const getCoupon = async (req, res) => {
+    try {
+      const { token } = req.body;
+      const decoded = jwt.decode(token, process.env.secret_key);
+      const userId = decoded.userId;
+  
+      const user = await User.findById(userId);
+      const usedCoupons = user.coupon || [];
+  
+      const availableCoupons = await Coupon.find({
+        name: { $nin: usedCoupons }
+      });
+  
+      res.json({ success:true , coupon: availableCoupons });
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({ success: false, message: "Failed to get available coupons" });
+    }
+  };
+  
+
+const applyCoupon = async (req,res)=>{
+    try {
+        let {couponId,t} = req.body
+
+        const decoded = jwt.decode(t,process.env.secret_key)
+        const userId = decoded.userId
+ 
+        let coupon = await Coupon.findById(couponId)
+        console.log("coupon",coupon);
+        let user = await User.findById(userId)
+        
+        user.coupon.push(coupon.name)
+        await user.save()
+
+        let cart = await Cart.findOne({userId:userId})
+        cart.coupon.name = coupon.name
+        cart.coupon.amount = coupon.amount
+        await cart.save()
+        
+        res.json({success:true})
+        
+
+    } catch (error) {
+        console.log(error);
+        
+    }
+  }
+
+  const removeCoupon = async (req,res)=>{
+    try {
+
+        const {t,coupon} = req.body
+        const decoded = jwt.decode(t,process.env.secret_key)
+        const userId = decoded.userId
+
+        console.log(userId,coupon);
+        
+
+        const cart = await Cart.updateOne({userId:userId},{$unset:{coupon:""}})
+
+        const user = await User.findByIdAndUpdate(userId,{$pull:{coupon:coupon.name}})
+
+        res.json({success:true})
+
+    } catch (error) {
+        console.log(error);
+        
+    }
+  }
+
 const placeOrder = async (req, res) => {
     try {
         
@@ -306,7 +389,7 @@ const placeOrder = async (req, res) => {
 
 
         // Deleteing Cart
-        await Cart.findOneAndDelete({ userId: userId });
+        await Cart.deleteMany({ userId: userId });
 
         
         // console.log("Order Placed Successfully:", newOrder);
@@ -545,24 +628,12 @@ const chatbot = async (req, res) => {
   
 
 
-  const applyCoupon = async (req,res)=>{
-    try {
-        let {couponId} = req.body
-
-        let coupon = await Coupon.findById(couponId)
-        console.log("coupon",coupon);
-        
-    } catch (error) {
-        console.log(error);
-        
-    }
-  }
 
 
 module.exports = {
   
     login,
-    googleAuth,
+    // googleAuth,
     register,
     getProducts,
     cartAdd,
@@ -572,7 +643,9 @@ module.exports = {
     verifyPayment,
     myOrders,
     chatbot,
+    getCoupon,
     applyCoupon,
+    removeCoupon
     
 }
 

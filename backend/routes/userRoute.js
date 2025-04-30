@@ -8,7 +8,9 @@ const { register, login, getProducts, cartAdd, loadCart,
     cartRemove, placeOrder, myOrders, 
     verifyPayment, chatbot,
     googleAuth,
-    applyCoupon} = require('../controllers/userController')
+    applyCoupon,
+    removeCoupon,
+    getCoupon} = require('../controllers/userController')
 
 
 
@@ -25,7 +27,7 @@ user.use(express.json())
 
 user.post('/login',login)
 
-user.post('/auth/google',googleAuth)
+// user.post('/auth/google',googleAuth)
 
 user.post('/register',register)
 
@@ -45,6 +47,10 @@ user.get('/myOrders',myOrders)
 
 user.post('/chatbot',chatbot)
 
+user.post('/getCoupon',getCoupon)
+
 user.post('/applyCoupon',applyCoupon)
+
+user.post('/removeCoupon',removeCoupon)
 
 module.exports = user

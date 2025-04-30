@@ -27,7 +27,10 @@ const Order = () => {
     const navigate = useNavigate()
 
     const location = useLocation(0)
-    const {amount} = location.state 
+    const {amount} = location.state  || 0
+
+
+   
     
 
     const validate = ()=>{
@@ -122,6 +125,9 @@ const Order = () => {
 
         if(response.data.success){
             toast.success("Order Placed",{autoClose:1500})
+
+            
+            
         }
          
     }
@@ -224,17 +230,21 @@ const Order = () => {
       };
 
     
-    useEffect(()=>{
-        
-        if(!token){
-            navigate('/user/login')
+      useEffect(() => {
+        if (!token) {
+          navigate('/user/login');
+          return;
         }
-        
-        setSubtotal(amount)
-        
-
-        
-    },[cartItems])
+      
+        const hasItemsInCart = Object.values(cartItems).some((qty) => qty > 0);
+        if (!hasItemsInCart || subtotal <= 0) {
+          toast.info("Your cart is empty. Please add items to continue.");
+          navigate('/user/home');
+        }
+      
+        setSubtotal(amount);
+      }, [cartItems, token, amount, subtotal, navigate]);
+      
 
 
 

@@ -22,6 +22,8 @@ const StoreContextProvider = (props)=>{
     const [coupons,setCoupons] = useState([])
 
     const [couponApplied,setCouponApplied] = useState(null)
+    
+    
 
     const [cartAmount,setCartAmount] = useState(0)
 
@@ -40,16 +42,37 @@ const StoreContextProvider = (props)=>{
         if(response.data.success){
             const cartData = response.data.cartData  
             
+            // console.log(cartData);
+
+            // if (cartData.length > 0 && cartData[0].coupon) {
+            //     const coupon = {
+            //         name: cartData[0].coupon.name,
+            //         amount: cartData[0].coupon.amount
+            //     };
             
+            //     setCouponApplied(true);
+            //     setAppliedCoupon(coupon);
+            // }
+            
+
+
+
+            
+            
+
             const formattedCartItems = cartData.reduce((acc,item)=>{
                 acc[item.productId] = item.quantity
+                
                 return acc
             },{})
+
             
 
-              
-
-              setCartItems(formattedCartItems) 
+            
+            console.log(formattedCartItems);
+            setCartItems(formattedCartItems)
+            
+            
            
         }else{
             toast.error("Error loading cart")
@@ -59,6 +82,10 @@ const StoreContextProvider = (props)=>{
                
         }
     }
+
+
+
+    
 
     
     const addToCart = async (itemId) => {
@@ -125,6 +152,8 @@ const StoreContextProvider = (props)=>{
             const response = await axios.get('http://localhost:2000/user/getProducts')
             // console.log(response.data.products);
             setFoodList(response.data.products)
+
+
             
         } catch (error) {
             console.log(error);
@@ -158,7 +187,9 @@ const StoreContextProvider = (props)=>{
     
     const getCoupons = async ()=>{
         try {
-            const response = await axios.get('http://localhost:2000/admin/getCoupon')
+            const response = await axios.post('http://localhost:2000/user/getCoupon',{
+                token:token
+            })
         if(response.data.coupon){
             // console.log(response.data.coupon);
             
@@ -176,6 +207,7 @@ const StoreContextProvider = (props)=>{
             await fetchFoodList()
             await loadCartData()
             await getCoupons()
+            
         }
 
         loadData()
@@ -219,7 +251,9 @@ const StoreContextProvider = (props)=>{
         coupons,
         setCoupons,
         couponApplied,
-        setCouponApplied
+        setCouponApplied,
+        // appliedCoupon,
+        // setAppliedCoupon
     }
 
     return (

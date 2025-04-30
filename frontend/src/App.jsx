@@ -2,7 +2,7 @@ import { useState } from 'react'
 import {BrowserRouter, Route, Routes} from 'react-router-dom'
 import { ToastContainer, toast } from 'react-toastify';
 // import "leaflet/dist/leaflet.css";
-import { GoogleOAuthProvider } from '@react-oauth/google';
+// import { GoogleOAuthProvider } from '@react-oauth/google';
 
 
 
@@ -41,7 +41,7 @@ function App() {
 
   return (
     <>
-    <GoogleOAuthProvider clientId={client_id}>
+    {/* <GoogleOAuthProvider clientId={client_id}> */}
       <div className="app">
       <ToastContainer />
       
@@ -71,7 +71,7 @@ function App() {
 
         
     </div>
-    </GoogleOAuthProvider>
+    {/* </GoogleOAuthProvider> */}
        
       
       

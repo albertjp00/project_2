@@ -143,11 +143,11 @@ const Login = () => {
 
             
 
-            <GoogleOAuthProvider clientId = {client_id}>
+            {/* <GoogleOAuthProvider clientId = {client_id}>
                 <GoogleLogin 
                 onSuccess={(response)=>googleLogin(response)} onError={() => toast.error("Google Login Failed")}
                 />
-            </GoogleOAuthProvider>
+            </GoogleOAuthProvider> */}
           </div>
         
     </div>

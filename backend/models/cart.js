@@ -11,9 +11,15 @@ const cartSchema = new mongoose.Schema({
     quantity:{
             type:Number,
             default:0
-    }
-    
-    
+    },
+    coupon:{
+        name:{
+            type:String,
+        },
+        amount:{
+            type:Number
+        }
+    } 
 }) 
 
 

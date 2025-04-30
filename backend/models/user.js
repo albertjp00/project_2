@@ -8,22 +8,19 @@ const userSchema=new mongoose.Schema({
     },
     email:{
         type:String,
-        requried:true
+        required:true
     },
     password:{
         type:String,
     },
 
-    googleId : {
-        type:String,
-        unique : true,
-        sparse: true,
-        default:"nill"
-    },
+    // googleId : {
+    //     type:String,
+    //     unique:true,
+    //     sparse:true
+    // },
     coupon:[{
-        code:{
             type:String
-        }
     }]
             
 })

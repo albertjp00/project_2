@@ -10,7 +10,24 @@ const Coupon = () => {
         amount :""
     })
 
-    const {coupons,setCoupons  } = useContext(StoreContext)
+    const [coupons,setCoupons ] = useState([])
+
+
+    const getCoupons = async ()=>{
+        try {
+            const response = await axios.get('http://localhost:2000/admin/getCoupon',
+            )
+        if(response.data.coupon){
+            console.log(response.data.coupon);
+            
+            setCoupons(response.data.coupon)
+            
+        }
+        } catch (error) {
+            console.log(error);
+            
+        }
+    }
     
 
     const onChangeHandler = (e)=>{
@@ -94,6 +111,12 @@ const Coupon = () => {
         }
 
     }
+
+    useEffect(()=>{
+        getCoupons()
+        console.log(coupons);
+        
+    },[])
     
 
   return (

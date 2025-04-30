@@ -65,6 +65,16 @@ mongoose.connect(process.env.MONGO_URL)
 .then(()=>console.log("Database connected"))
 .catch((err) =>console.log('Database Not connected',err))
 
+// app.get('/fix-index', async (req, res) => {
+//     try {
+//       await mongoose.connection.collection('users').dropIndex('googleId_1');
+//       res.send('Index dropped');
+//     } catch (err) {
+//       res.status(500).send(err.message);
+//     }
+//   });
+  
+
 
 app.use(cors({
     origin: ["http://localhost:5173"],  // Allow requests from your frontend
@@ -78,9 +88,8 @@ app.use(cors({
 
 app.use('/user',userRoute)
 
-app.use('/admin',adminRoute)
+app.use('/admin',adminRoute)    
 
 server.listen(port,()=>{
     console.log("started");
-    
 })
