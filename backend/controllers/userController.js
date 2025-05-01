@@ -196,16 +196,18 @@ const getProducts  = async (req,res)=>{
 
 const loadCart = async (req,res) =>{
     try {
-
+        if(req.query.t){
         let token = req.query.t
         
         let decoded  =   jwt.decode(token,process.env.secret_key)
         let userId = decoded.userId
-        const cartData = await Cart.find({userId})
+        
+            const cartData = await Cart.find({userId})
         
         
         
         res.json({success:true,cartData:cartData})
+        }
     } catch (error) {
         console.log(error);
         
@@ -558,6 +560,8 @@ const chatbot = async (req, res) => {
 
       User: ${message}
       `;
+
+      
 
       //   about Order
       if(message.toLowerCase().includes("order") || message.toLowerCase().includes("track")){

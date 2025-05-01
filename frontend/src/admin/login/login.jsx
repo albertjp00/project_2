@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import './login.css'
 import { Link, useNavigate } from 'react-router-dom'
 import axios from 'axios'
+import { toast } from 'react-toastify'
 
 const AdminLogin = () => {
 
@@ -22,10 +23,17 @@ const AdminLogin = () => {
       email,password
     })
 
-    console.log("login succcess(admin)" ,response.data);
+    if(response.data.success){
+      toast.success(response.data.message)
+      navigate('/admin/dashboard')
+    }else{
+      toast.error(response.data.message)
+    }
+
+    console.log("login succcess" ,response.data);
     
 
-    navigate('/admin/dashboard')
+    
 
     } catch (error) {
       console.log(error);

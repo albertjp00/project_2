@@ -6,7 +6,7 @@ const multer = require('multer')
 
 const cors = require('cors')
 
-const { addProduct, getList,  unlist, 
+const { login,addProduct, getList,  unlist, 
     listItem, editItem, getEdit, listOrders, 
     updateStatus,
     addCoupon,
@@ -36,6 +36,7 @@ const upload = multer({
 })
 
 
+admin.post('/login',login)
 
 admin.post('/addProduct',upload.single("image"),addProduct)
 

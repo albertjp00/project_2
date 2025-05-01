@@ -1,7 +1,41 @@
 const  Product = require("../models/product");
 const Order = require('../models/order');
 const Coupon = require('../models/coupon')
+const Admin  = require('../models/admin')
 
+
+const login = async (req,res)=>{
+    try {
+
+console.log("lgiin");
+
+        
+        
+        let {email,password} = req.body
+
+        console.log("login",req.body);
+
+        let admin = await Admin.findOne({email})
+
+        if(!admin){
+            return res.json({success:false,message:"Admin not Found"})
+        }
+
+        if(admin.password !=password){
+            return res.json({success:false,message:"Incorrect Password"})
+        }
+
+        let adminSave  = await Admin.create({email,password})
+
+        console.log(admin);
+
+        return res.json({success:true,message:"Login Success",adminSave})
+    } catch (error) {
+        console.log(error);
+        
+    }
+
+}
 
 
 const addProduct = async (req,res)=>{
@@ -195,6 +229,7 @@ const getCoupon = async (req,res)=>{
   }
 
 module.exports ={
+    login,
     addProduct,
     getList,
     unlist,

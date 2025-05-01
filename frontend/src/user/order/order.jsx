@@ -236,11 +236,11 @@ const Order = () => {
           return;
         }
       
-        const hasItemsInCart = Object.values(cartItems).some((qty) => qty > 0);
-        if (!hasItemsInCart || subtotal <= 0) {
-          toast.info("Your cart is empty. Please add items to continue.");
-          navigate('/user/home');
-        }
+        // const hasItemsInCart = Object.values(cartItems).some((qty) => qty > 0);
+        // if (!hasItemsInCart || subtotal <= 0) {
+        //   toast.info("Your cart is empty. Please add items to continue.");
+        //   navigate('/user/home');
+        // }
       
         setSubtotal(amount);
       }, [cartItems, token, amount, subtotal, navigate]);

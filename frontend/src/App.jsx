@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import {BrowserRouter, Route, Routes} from 'react-router-dom'
+import {BrowserRouter, Navigate, Route, Routes} from 'react-router-dom'
 import { ToastContainer, toast } from 'react-toastify';
 // import "leaflet/dist/leaflet.css";
 // import { GoogleOAuthProvider } from '@react-oauth/google';
@@ -48,6 +48,8 @@ function App() {
       
       
       <Routes>
+          <Route path='/user' element={<Navigate to='/user/login' />}/>
+
           <Route path='/user/login' element={<Login />} />
           <Route path='/user/register' element={<Register />}/>
           <Route path='/user/home' element={<Home />} />
@@ -59,6 +61,8 @@ function App() {
 
 
           {/* admin */}
+
+          <Route path='/admin' element={<Navigate to='/admin/login' />}></Route>
 
           <Route path='/admin/login' element = {<AdminLogin />}/>
           <Route path='/admin/dashboard/*' element={<Dashboard />}/> 
